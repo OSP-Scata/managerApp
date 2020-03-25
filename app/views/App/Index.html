@@ -1,0 +1,25 @@
+{{set . "title" "Home"}}
+{{template "header.html" .}}
+
+<div class="container">
+  <div class="row">
+    <div class="span6">
+      <body>
+        <link type="text/css" rel="stylesheet" href="/public/css/webix.css">
+		<link type="text/css" rel="stylesheet" href="/public/css/compact.css">
+        <!-- <link type="text/css" rel="stylesheet" href="/public/css/mini.css"> -->
+        <script src = "/public/js/lib/webix.js"></script>
+        <script src = "/public/js/static/script.js"></script>
+        <script src = "/public/js/static/data.js"></script>
+        <script src = "/public/js/static/assessments.js"></script>
+        <script src = "/public/js/static/login.js"></script>
+        <script src = "/public/js/static/candidates.js"></script>
+        <script src = "/public/js/static/interviewer.js"></script>
+        <script src = "/public/js/serverRequests/assessment.js"></script>
+        <script src = "/public/js/serverRequests/candidate.js"></script>
+        <script src = "/public/js/serverRequests/interviewer.js"></script>
+      </body>
+    </div>
+  </div>
+</div>
+{{template "footer.html" .}}
