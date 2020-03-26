@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"managerApp/app/models/entities"
 	"managerApp/app/models/mappers"
-
+	"managerApp/app/helpers"
 	_ "github.com/lib/pq"
 )
 
@@ -14,17 +14,15 @@ type AuthProvider struct {
 	auth *mappers.AuthMapper
 }
 
-func (p *AuthProvider) Init() {
-	//defer p.db.Close()
-	//подключение к БД
+func (p *AuthProvider) Init() error {
 	var err error
-	connStr := "user=postgres password=password port=5433 dbname=AssessmentManager sslmode=disable"
-	p.db, err = sql.Open("postgres", connStr)
+	p.db, err = helpers.DBInit()
 	if err != nil {
-		panic(err)
+		return err
 	}
 	p.auth = new(mappers.AuthMapper)
 	p.auth.Init(p.db)
+	return nil
 }
 
 func (p *AuthProvider) Login(userName string, password string) (*entities.User, error) {

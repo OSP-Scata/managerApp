@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"managerApp/app/models/entities"
 	"managerApp/app/models/mappers"
-
+	"managerApp/app/helpers"
 	_ "github.com/lib/pq"
 )
 
@@ -17,8 +17,7 @@ type InterviewerProvider struct {
 func (p *InterviewerProvider) Init() error {
 	//подключение к БД
 	var err error
-	connStr := "user=postgres password=password port=5433 dbname=AssessmentManager sslmode=disable"
-	p.db, err = sql.Open("postgres", connStr)
+	p.db, err = helpers.DBInit()
 	if err != nil {
 		return err
 	}

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"managerApp/app/models/entities"
 	"managerApp/app/models/mappers"
-
+	"managerApp/app/helpers"
 	_ "github.com/lib/pq"
 	_ "github.com/revel/revel"
 )
@@ -16,20 +16,15 @@ type AssessmentProvider struct {
 }
 
 //инициализация и подключение к БД
-func (p *AssessmentProvider) Init() {
+func (p *AssessmentProvider) Init() error {
 	var err error
-	connStr := "user=postgres password=password port=5433 dbname=AssessmentManager sslmode=disable"
-	p.db, err = sql.Open("postgres", connStr)
+	p.db, err = helpers.DBInit()
 	if err != nil {
-		panic(err)
+		return err
 	}
-	err = p.db.Ping()
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println("Successfully connected to PostgreSQL.")
 	p.assessments = new(mappers.AssessmentMapper)
 	p.assessments.Init(p.db)
+	return nil
 }
 
 //изменение ассессмента
