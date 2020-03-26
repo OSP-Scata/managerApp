@@ -18,17 +18,17 @@ webix.editors.setCandStatus = webix.extend({
 
 var peopleTable = {
     view:"datatable", id:"peopleList", autoWidth:true, editable:true, select:true, columns:[
-        { id:"ID", header:"#", width:40},
-        { id:"Surname", header:"Фамилия", width:100},
-        { id:"Name", header:"Имя", width:100},
-        { id:"Patronymic", header:"Отчество", width:100},
-        { id:"Email", header:"E-mail", width:170},
-        { id:"BirthDate", header:"Дата рождения", width:120},
-        { id:"PhoneNumber",  header:"Телефон", width:150},
-        { id:"Status", template:"#StatusName#", editor:"setCandStatus", options:candidateStatus, value:3, header:"Статус", width:120},
-        { id:"Address", header:"Адрес", width:170},
-        { id:"Education", header:"Образование", width:170},
-        { id:"Resume", header:"Резюме", width:170},
+        { id:"id", header:"#", width:40, template:"#ID#"},
+        { id:"lastname", header:"Фамилия", width:100, template:"#LastName#"},
+        { id:"firstname", header:"Имя", width:100, template:"#FirstName#"},
+        { id:"midname", header:"Отчество", width:100, template:"#MidName#"},
+        { id:"birthdate", header:"Дата рождения", width:120, template:"#BirthDate#"},
+        { id:"email", header:"E-mail", width:170, template:"#Email#"},
+        { id:"phone",  header:"Телефон", width:150, template:"#Phone#"},
+        { id:"education", header:"Образование", width:170, template:"#Education#"},
+        { id:"status", template:"#StatusName#", editor:"setCandStatus", options:candidateStatus, value:3, header:"Статус", width:120},
+        //{ id:"Address", header:"Адрес", width:170},
+        //{ id:"Resume", header:"Резюме", width:170},
     ], on:{onItemDblClick:editPeople}
 }
 
@@ -58,16 +58,16 @@ var addCand = webix.ui({
       id:"addCandidate",
       editable:true,
       elements:[
-        { view:"text", id:"surnameCand", name:"surname", label:"Фамилия"},
-        { view:"text", id:"nameCand", name:"name", label:"Имя"},
-        { view:"text", id:"patronymicCand", name:"patronymic", label:"Отчество"},
-        { view:"text", id:"emailCand", name:"email", label:"E-mail"},
-        { view:"text", id:"phoneCand", name:"phone", label:"Телефон"},
-        //{ view:"richselect", suggest:{ data:candStatus}, id:"statusCand", value:3, name:"status", label:"Статус"},
-        { view:"text", id:"addressCand", name:"address", label:"Адрес"},
+        { view:"text", id:"newLastname", name:"surname", label:"Фамилия"},
+        { view:"text", id:"newFirstname", name:"name", label:"Имя"},
+        { view:"text", id:"newMidname", name:"patronymic", label:"Отчество"},
         { view:"datepicker", id:"birthDateCand", name:"birthDate", label:"Дата рождения", stringResult:true},
-        { view:"text", id:"educationCand", name:"education", label:"Образование"},
-        { view:"text", id:"resumeCand", name:"resume", label:"Резюме"},
+        { view:"text", id:"newEmail", name:"email", label:"E-mail"},
+        { view:"text", id:"newPhone", name:"phone", label:"Телефон"},
+        //{ view:"richselect", suggest:{ data:candStatus}, id:"statusCand", value:3, name:"status", label:"Статус"},
+        //{ view:"text", id:"addressCand", name:"address", label:"Адрес"},
+        { view:"text", id:"newEducation", name:"education", label:"Образование"},
+        //{ view:"text", id:"resumeCand", name:"resume", label:"Резюме"},
         { cols:[{ view:"button", value:"Добавить", click:addPeople},
         { view:"button", value:"Отмена", click:function(){
             $$("surnameCand").setValue("");

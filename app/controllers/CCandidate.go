@@ -149,22 +149,11 @@ func (c *CCandidate) PostCandidateByID(newCandidate entities.Candidate) revel.Re
 	if err != nil {
 		return c.RenderJSON(helpers.Failed(err))
 	}
-
 	sAssessmentId := c.Params.Get("assessmentID")
 	assessmentId, err := strconv.ParseInt(sAssessmentId, 10, 64)
 	if err != nil {
 		return c.RenderJSON(helpers.Failed(err))
 	}
-	/*var newCandidate entities.Candidate
-	b, err := ioutil.ReadAll(c.Request.GetBody())
-	if err != nil {
-		return c.RenderJSON(helpers.Failed(err))
-	}
-	fmt.Println("Change candidate request:", b)
-	err = json.Unmarshal(b, &newCandidate)
-	if err != nil {
-		return c.RenderJSON(helpers.Failed(err))
-	}*/
 	updatedCandidate, err := c.provider.PostCandidate(&newCandidate, candidateId, assessmentId)
 	if err != nil {
 		return c.RenderJSON(helpers.Failed(err))
@@ -180,7 +169,6 @@ func (c *CCandidate) DeleteCandidateByID() revel.Result {
 	if err != nil {
 		return c.RenderJSON(helpers.Failed(err))
 	}
-
 	sAssessmentId := c.Params.Get("assessmentID")
 	assessmentId, err := strconv.ParseInt(sAssessmentId, 10, 64)
 	if err != nil {
@@ -192,4 +180,27 @@ func (c *CCandidate) DeleteCandidateByID() revel.Result {
 		return c.RenderJSON(erro)
 	}
 	return nil
+}
+
+//изменить статусы всех кандидатов, состоящих в выбранном ассессменте
+func (c *CCandidate) SetStatusesForAll() revel.Result {
+	c.Init()
+	//получаем ID выбранного ассессмента и конвертируем в int
+	sAssessmentId := c.Params.Get("assessmentID")
+	assessmentId, err := strconv.ParseInt(sAssessmentId, 10, 64)
+	if err != nil {
+		fmt.Println(err)
+		return c.RenderJSON(err)
+	}
+	sStatusId := c.Params.Get("statusID")
+	statusId, err := strconv.ParseInt(sStatusId, 10, 64)
+	if err != nil {
+		return c.RenderJSON(helpers.Failed(err))
+	}
+	updatedStatus, err := c.provider.SetAllCandidateStatus(&newStatus, statusId, candidateId)
+	if err != nil {
+		return c.RenderJSON(helpers.Failed(err))
+	}
+	return c.RenderJSON(helpers.Success(updatedStatus))
+	//return c.RenderJSON(candidates)
 }

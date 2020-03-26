@@ -30,6 +30,7 @@ POST 	/assessment/:assessmentID/candidate/:candidateID 					CCandidate.PostCandi
 POST 	/assessment/:assessmentID/candidate/:candidateID/status/:statusID	CCandidate.SetStatus
 DELETE 	/assessment/:assessmentID/candidate/:candidateID 					CCandidate.DeleteCandidateByID
 GET 	/assessment/:assessmentID/candidate/:candidateID/status				CCandidate.GetCandidateStatus
+POST 	/assessment/:assessmentID/candidate								    CCandidate.SetStatusesForAll
 
 # Блок сотрудников
 PUT 	/interviewer 														CInterviewer.SetInterviewer

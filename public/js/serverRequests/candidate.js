@@ -36,6 +36,35 @@ function showCandidate(){
     xhr.send();
 }
 
+function setStatusesInAssessment(selectedAssessmentId, selectedStatusId){
+    let allCandidateStatusId = 0
+    let allCandidateStatus = ""
+    if (selectedStatusId == 2) {
+        allCandidateStatusId = 4
+        allCandidateStatus = "Завершил"
+    }
+    else if (selectedStatusId == 3) {
+        allCandidateStatusId = 5
+        allCandidateStatus = "Не завершил"
+    }
+    //console.log(allCandidateStatusId, allCandidateStatus)
+    let xhr = new XMLHttpRequest();
+    xhr.open("POST", "/assessment/" + selectedAssessmentId + "/candidate");
+    xhr.onreadystatechange = function() {
+        if (xhr.status == 200 && xhr.readyState == xhr.DONE) {
+            let res = JSON.parse(xhr.response)
+            if (res.Result === 1) {
+                webix.message({type:"error", text:res.ErrorText});
+                return
+            }
+            $$("peopleList").clearAll();
+            $$("peopleList").parse(xhr.response);
+            //console.log("showCandidate called")
+        }
+    } 
+    xhr.send(JSON.stringify(allCandidateStatusId, allCandidateStatus));
+}
+
 function showCandidateById(){
     let selectedAssessmentId = $$("assessments").getSelectedItem().ID
     let selectedCandidateId = $$("peopleList").getSelectedItem().ID

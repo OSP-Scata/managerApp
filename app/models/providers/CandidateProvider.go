@@ -14,8 +14,8 @@ type CandidateProvider struct {
 	candidates *mappers.CandidateMapper
 }
 
+//подключение к БД
 func (p *CandidateProvider) Init() error {
-	//подключение к БД
 	var err error
 	connStr := "user=postgres password=password port=5433 dbname=AssessmentManager sslmode=disable"
 	p.db, err = sql.Open("postgres", connStr)
@@ -118,6 +118,13 @@ func (p *CandidateProvider) GetCandidateStatus(id int64, candidateId int64) ([]*
 
 //задать статус кандидата в выбранном ассессменте
 func (p *CandidateProvider) SetCandidateStatus(newStatus *entities.CandidateStatus, statusId int64, assessmentId int64) (int64, error) {
+	defer p.db.Close()
+	status, err := p.candidates.SetStatus(newStatus, statusId, assessmentId)
+	return status, err
+}
+
+//задать статусы всех кандидатов в выбранном ассессменте
+func (p *CandidateProvider) SetAllCandidateStatus(newStatus *entities.CandidateStatus, statusId int64, assessmentId int64) (int64, error) {
 	defer p.db.Close()
 	status, err := p.candidates.SetStatus(newStatus, statusId, assessmentId)
 	return status, err

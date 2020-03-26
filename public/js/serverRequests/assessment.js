@@ -74,7 +74,7 @@ function setAssessmentStatus(selectedStatusId, status){
     let xhr = new XMLHttpRequest();
     let newStatus = {ID: selectedStatusId,
         Status: status}
-    console.log(JSON.stringify(newStatus));
+    //console.log(JSON.stringify(newStatus));
     xhr.open("POST", "/assessment/" + selectedAssessmentId + "/status/" + selectedStatusId, true);
     xhr.onreadystatechange = function() {
         console.log(xhr.readyState, xhr.status, xhr.responseText)
@@ -82,5 +82,6 @@ function setAssessmentStatus(selectedStatusId, status){
             showAssessment();
         }
     }
-    xhr.send(JSON.stringify(newStatus));
+    setStatusesInAssessment(selectedAssessmentId, selectedStatusId)
+    //xhr.send(JSON.stringify(newStatus));
 }

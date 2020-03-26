@@ -57,7 +57,7 @@ func (m *CandidateMapper) SelectAllCandidates() ([]*entities.Candidate, error) {
 	return candidates, nil
 }
 
-//получить всех кандидатов которые участвуют в выбранном асссесменте
+//получить всех кандидатов, которые участвуют в выбранном асссесменте
 func (m *CandidateMapper) Select(assessmentId int64) ([]*entities.Candidate, error) {
 	var (
 		c_id           sql.NullInt64
@@ -94,7 +94,7 @@ func (m *CandidateMapper) Select(assessmentId int64) ([]*entities.Candidate, err
 			Email:       c_email.String,
 			PhoneNumber: c_phone_number.String,
 			Resume:      c_resume.String,
-			Address:      c_address.String,
+			Address:     c_address.String,
 			Education:   c_education.String,
 			BirthDate:   c_birth_date.String,
 			StatusName:  c_status_name.String,
@@ -163,14 +163,13 @@ func (m *CandidateMapper) SelectStatus(candidateId int64, assessmentId int64) ([
 	statuses := make([]*entities.CandidateStatus, 0)
 	//запросы к БД
 	//получаем родительский статус кандидата
-	query := `
-	SELECT c_id, c_status FROM t_status_candidate 
+	query := `SELECT c_id, c_status FROM t_status_candidate 
 		WHERE c_id = (select fk_parent FROM t_status_candidate where c_id = 
 		(select c_status_candidate FROM toc_assessment_candidate where 
 		c_id_candidate = $1));`
 	//получаем возможные статусы
 	query2 := `SELECT u.c_id, u.c_status FROM t_status_candidate u INNER JOIN toc_assessment_candidate d ON 
-d.c_status_candidate = u.fk_parent WHERE d.c_id_candidate = $1 AND d.c_id_assessment = $2`
+	d.c_status_candidate = u.fk_parent WHERE d.c_id_candidate = $1 AND d.c_id_assessment = $2`
 
 	rows, err := m.db.Query(query, candidateId)
 	if err != nil {
@@ -214,6 +213,15 @@ func (m *CandidateMapper) SetStatus(newStatus *entities.CandidateStatus, statusI
 		return 0, fmt.Errorf("Ошибка изменения статуса кандидата: %v", err)
 	}
 	return statusId, nil
+}
+
+//задать статусы кандидатов в ассессменте
+func (m *CandidateMapper) SetAllStatus(assessmentId int64, statusId int64) {
+	query1 := `SELECT u.c_id, u.c_surname, u.c_name, u.c_patronymic, u.c_email, u.c_phone_number, 
+		u.c_resume, u.c_addres, to_char(u.c_birth_date, 'DD.MM.YYYY'), u.c_education, v.c_status 
+		FROM t_candidate u INNER JOIN toc_assessment_candidate d ON u.c_id = d.c_id_candidate 
+		INNER JOIN t_status_candidate v ON d.c_status_candidate = v.c_id WHERE d.c_id_assessment = $1`
+	query2 := `UPDATE toc_assessment_candidate SET c_status_candidate = $2 WHERE c_id_assessment = $1`
 }
 
 //создание кандидата
