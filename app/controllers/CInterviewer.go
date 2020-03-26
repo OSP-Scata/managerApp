@@ -110,23 +110,8 @@ func (c *CInterviewer) PutInterviewer() revel.Result {
 }
 
 //добавляем сотрудника (не в ассессмент, а в список сотрудников)
-func (c *CInterviewer) SetInterviewer() revel.Result {
+func (c *CInterviewer) SetInterviewer(newInterviewer entities.Interviewer) revel.Result {
 	c.Init()
-
-	var newInterviewer entities.Interviewer
-	//считываем данные с фронта
-	b, err := ioutil.ReadAll(c.Request.GetBody())
-	if err != nil {
-		return c.RenderJSON(helpers.Failed(err))
-	}
-
-	//анмаршалим
-	err = json.Unmarshal(b, &newInterviewer)
-	if err != nil {
-		return c.RenderJSON(helpers.Failed(err))
-	}
-
-	//вызываем метод SetInterviewer провайдера
 	createdInterviewer, err := c.provider.SetInterviewer(&newInterviewer)
 	if err != nil {
 		return c.RenderJSON(helpers.Failed(err))
