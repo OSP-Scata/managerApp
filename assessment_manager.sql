@@ -75,15 +75,15 @@ CREATE SEQUENCE IF NOT EXISTS candidate_id
 
 CREATE TABLE IF NOT EXISTS assessment_manager.toc_assessment_candidate ( 
 	a_c_id               integer PRIMARY KEY NOT NULL   ,
-	a_c_assessment_id    serial   ,
-	a_c_candidate_id     serial   ,
+	a_c_assessment_id    integer   ,
+	a_c_candidate_id     integer   ,
 	a_c_candidate_status varchar(20)   
  );
 
 CREATE TABLE IF NOT EXISTS assessment_manager.toc_assessment_interviewer ( 
 	a_i_id               integer PRIMARY KEY NOT NULL   ,
-	a_i_assessment_id    serial   ,
-	a_i_interviewer_id   serial   
+	a_i_assessment_id    integer   ,
+	a_i_interviewer_id   integer   
  );
 
 ALTER TABLE assessment_manager.t_assessment ADD CONSTRAINT fk_t_assessment_t_assessment_status FOREIGN KEY ( a_status ) REFERENCES assessment_manager.t_assessment_status( a_s_name );
