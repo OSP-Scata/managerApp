@@ -74,14 +74,14 @@ CREATE SEQUENCE IF NOT EXISTS candidate_id
 	OWNED BY t_candidate.c_id;
 
 CREATE TABLE IF NOT EXISTS assessment_manager.toc_assessment_candidate ( 
-	a_c_id               serial PRIMARY KEY NOT NULL   ,
+	a_c_id               integer PRIMARY KEY NOT NULL   ,
 	a_c_assessment_id    serial   ,
 	a_c_candidate_id     serial   ,
 	a_c_candidate_status varchar(20)   
  );
 
 CREATE TABLE IF NOT EXISTS assessment_manager.toc_assessment_interviewer ( 
-	a_i_id               serial PRIMARY KEY NOT NULL   ,
+	a_i_id               integer PRIMARY KEY NOT NULL   ,
 	a_i_assessment_id    serial   ,
 	a_i_interviewer_id   serial   
  );
