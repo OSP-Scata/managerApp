@@ -8,9 +8,9 @@ import (
 func DBInit() (*sql.DB, error) {
 	var (
 		err error
-		db *sql.DB
+		db  *sql.DB
 	)
-	connStr := "user=postgres password=password port=5433 dbname=AssessmentManager sslmode=disable"
+	connStr := "user=postgres password=password port=5432 dbname=assessment_manager sslmode=disable"
 	db, err = sql.Open("postgres", connStr)
 	if err != nil {
 		return nil, err

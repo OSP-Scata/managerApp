@@ -1,17 +1,19 @@
 package controllers
 
 import (
-	"managerApp/app/helpers"
-	"managerApp/app/models/providers"
-	"managerApp/app/models/entities"
 	"database/sql"
-	_"encoding/base64"
-	_"encoding/json"
+	_ "encoding/base64"
+	_ "encoding/json"
 	"fmt"
+	"managerApp/app/helpers"
+	"managerApp/app/models/entities"
+	"managerApp/app/models/providers"
 	"strconv"
+
 	//"strings"
 
-	_"io/ioutil"
+	_ "io/ioutil"
+
 	"github.com/revel/revel"
 )
 
@@ -182,6 +184,7 @@ func (c *CCandidate) DeleteCandidateByID() revel.Result {
 	return nil
 }
 
+/*
 //изменить статусы всех кандидатов, состоящих в выбранном ассессменте
 func (c *CCandidate) SetStatusesForAll() revel.Result {
 	c.Init()
@@ -203,4 +206,4 @@ func (c *CCandidate) SetStatusesForAll() revel.Result {
 	}
 	return c.RenderJSON(helpers.Success(updatedStatus))
 	//return c.RenderJSON(candidates)
-}
+}*/
