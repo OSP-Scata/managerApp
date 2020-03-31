@@ -80,7 +80,7 @@ func (m *AssessmentMapper) Delete(assessmentId int64) error {
 //выбор ассессментов
 func (m *AssessmentMapper) Select() ([]entities.Assessment, error) {
 	assessments := []entities.Assessment{}
-	queryStr := `SELECT a_id, to_char(u.a_date, 'DD.MM.YYYY HH:MM'), d.a_status FROM t_assessment u INNER JOIN t_assessment_status d ON u.a_s_fk = d.a_id`
+	queryStr := `SELECT a_id, to_char(a_date, 'DD.MM.YYYY HH:MM'), a_status FROM t_assessment u INNER JOIN t_assessment_status d ON a_s_fk = a_id`
 	rows, err := m.db.Query(queryStr)
 	if err != nil {
 		panic(err)
@@ -125,8 +125,8 @@ func (m *AssessmentMapper) SelectStatus(assessmentId int64) ([]*entities.Assessm
 		c_status string
 	)
 	statuses := make([]*entities.AssessmentStatus, 0)
-	query := `SELECT u.a_id, u.a_status FROM t_assessment_status u INNER JOIN t_assessment d
-			ON d.a_id = $1`
+	query := `SELECT a_id, a_status FROM t_assessment_status u INNER JOIN t_assessment d
+			ON a_id = $1`
 	rows, err := m.db.Query(query, assessmentId)
 	if err != nil {
 		return nil, fmt.Errorf("Ошибка выбора всех статусов:%v", err)
