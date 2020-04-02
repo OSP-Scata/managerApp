@@ -80,7 +80,7 @@ func (m *AssessmentMapper) Delete(assessmentId int64) error {
 //выбор ассессментов
 func (m *AssessmentMapper) Select() ([]entities.Assessment, error) {
 	assessments := []entities.Assessment{}
-	queryStr := `SELECT a_id, to_char(a_date, 'DD.MM.YYYY HH:MM'), a_status FROM t_assessment u INNER JOIN t_assessment_status d ON a_s_fk = a_id`
+	queryStr := `SELECT a_id, to_char(a_date, 'DD.MM.YYYY HH:MM'), a_status FROM t_assessment INNER JOIN t_assessment_status ON a_s_fk = a_id`
 	rows, err := m.db.Query(queryStr)
 	if err != nil {
 		panic(err)
@@ -98,7 +98,7 @@ func (m *AssessmentMapper) Select() ([]entities.Assessment, error) {
 			assessments = append(assessments, assessment)
 		}
 	}
-	//fmt.Println(assessments)
+	fmt.Println("Mapper GET:", assessments)
 	return assessments, nil
 }
 
@@ -106,9 +106,9 @@ func (m *AssessmentMapper) Select() ([]entities.Assessment, error) {
 func (m *AssessmentMapper) Insert(newAssessment entities.Assessment) (int64, error) {
 	var insertedId int64
 	insertQuery := `INSERT INTO t_assessment 
-		(a_id, a_date, a_s_fk) 
+		(a_id, a_date, a_status) 
 		SELECT nextval('assessment_id'), to_timestamp($1,'YYYY-MM-DD HH24:MI:SS'), $2 
-		WHERE NOT EXISTS(SELECT a_id, a_date, a_s_fk FROM t_assessment WHERE a_date = to_timestamp($3,'YYYY-MM-DD HH24:MI:SS'))
+		WHERE NOT EXISTS(SELECT a_id, a_date, a_status FROM t_assessment WHERE a_date = to_timestamp($3,'YYYY-MM-DD HH24:MI:SS'))
 		returning a_id;`
 	err := m.db.QueryRow(insertQuery, newAssessment.Date, newAssessment.Status, newAssessment.Date).Scan(&insertedId)
 	if err != nil {
@@ -125,7 +125,7 @@ func (m *AssessmentMapper) SelectStatus(assessmentId int64) ([]*entities.Assessm
 		c_status string
 	)
 	statuses := make([]*entities.AssessmentStatus, 0)
-	query := `SELECT a_id, a_status FROM t_assessment_status u INNER JOIN t_assessment d
+	query := `SELECT a_s_id, a_s_name FROM t_assessment_status u INNER JOIN t_assessment d
 			ON a_id = $1`
 	rows, err := m.db.Query(query, assessmentId)
 	if err != nil {

@@ -1,5 +1,3 @@
---База для приложения - менеджера собеседований, который мне надо разработать как тестовый проект
-
 CREATE TABLE IF NOT EXISTS t_user ( 
 	u_id                 serial PRIMARY KEY NOT NULL,
 	u_login              varchar(32)  NOT NULL,
@@ -22,7 +20,7 @@ CREATE TABLE IF NOT EXISTS t_assessment (
 	a_id                 serial PRIMARY KEY NOT NULL,
 	a_date               timestamp  NOT NULL,
 	a_status             integer,
-	FOREIGN KEY (a_status) REFERENCES t_assessment_status (a_s_fk)
+	FOREIGN KEY (a_status) REFERENCES t_assessment_status (a_s_id)
  );
 
 CREATE SEQUENCE IF NOT EXISTS assessment_id
