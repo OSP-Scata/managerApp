@@ -215,9 +215,9 @@ func (m *CandidateMapper) Insert(newCandidate *entities.Candidate, assessmentId 
 	//обращения к БД
 	//добавляем кандидата к списку кандидатов
 	insertQuery := `INSERT INTO t_candidate 
-		(c_id, c_last_name, c_first_name, c_mid_name, c_email, c_phone_number, c_birth_date, c_education) 
-		SELECT nextval('candidate_id'), $1, $2, $3, $4, $5, $6, $7, to_date($8,'YYYY-MM-DD'), $9
-		WHERE NOT EXISTS(SELECT c_id, c_last_name, c_first_name, c_mid_name, c_email, c_phone_number, c_birth_date, c_education, c_status FROM t_candidate WHERE c_last_name = $10 AND c_first_name = $11 AND c_mid_name = $12 AND c_birth_date = to_date($13,'YYYY-MM-DD'))
+		(c_last_name, c_first_name, c_mid_name, c_email, c_phone_number, c_birth_date, c_education) 
+		SELECT $1, $2, $3, $4, $5, $6, $7, to_date($8,'YYYY-MM-DD'), $9
+		WHERE NOT EXISTS(SELECT c_last_name, c_first_name, c_mid_name, c_email, c_phone_number, c_birth_date, c_education, c_status FROM t_candidate WHERE c_last_name = $10 AND c_first_name = $11 AND c_mid_name = $12 AND c_birth_date = to_date($13,'YYYY-MM-DD'))
 		`
 	_, err := m.db.Exec(insertQuery, newCandidate.Surname, newCandidate.Name, newCandidate.Patronymic, newCandidate.Email, newCandidate.PhoneNumber, newCandidate.BirthDate, newCandidate.Education, newCandidate.Surname, newCandidate.Name, newCandidate.Patronymic, newCandidate.BirthDate)
 	if err != nil {

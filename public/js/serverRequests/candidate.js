@@ -85,7 +85,7 @@ function showCandidateById(){
     xhr.send();
 }
 
-function createCandidate(surname, name, patronymic, email, phone, address, birthDate, education, resume){
+function createCandidate(surname, name, patronymic, email, phone, birthDate, education){
     let xhr = new XMLHttpRequest();
     let selectedAssessmentId = $$("assessments").getSelectedItem().ID
     console.log(selectedAssessmentId)
@@ -113,7 +113,7 @@ function createCandidate(surname, name, patronymic, email, phone, address, birth
     xhr.send(JSON.stringify(newCandidate));
 }
 
-function editCandidate(surname, name, patronymic, email, phone, address, birthDate, education, resume){
+function editCandidate(surname, name, patronymic, email, phone, birthDate, education){
     let xhr = new XMLHttpRequest();
     let selectedAssessmentId = $$("assessments").getSelectedItem().ID
     let selectedCandidateId = $$("peopleList").getSelectedItem().ID

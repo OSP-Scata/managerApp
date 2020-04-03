@@ -42,6 +42,9 @@ function removeAssessment(){
     xhr.open("DELETE", "/assessment/" +selectedAssessmentId);
     xhr.onreadystatechange = function() {
         console.log(xhr.readyState, xhr.status, xhr.responseText)
+        if (xhr.status == 200 && xhr.readyState == 4) {
+            showAssessment()
+        }
     }       
     xhr.send();
 }
