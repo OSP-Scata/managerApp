@@ -77,15 +77,15 @@ func (m *AssessmentMapper) Delete(assessmentId int64) error {
 	return nil
 }
 
-//выбор ассессментов
+//выбор всех ассессментов из базы
 func (m *AssessmentMapper) Select() ([]entities.Assessment, error) {
 	assessments := []entities.Assessment{}
-	queryStr := `SELECT a_id, to_char(a_date, 'DD.MM.YYYY HH:MM'), a_status FROM t_assessment INNER JOIN t_assessment_status ON a_s_fk = a_id`
+	fmt.Println("Created array:", assessments)
+	queryStr := `SELECT up.a_id, to_char(up.a_date, 'DD.MM.YYYY HH24:MI'), down.a_s_name FROM t_assessment up INNER JOIN t_assessment_status down ON down.a_s_id = up.a_status` //
 	rows, err := m.db.Query(queryStr)
 	if err != nil {
 		panic(err)
 	}
-	defer rows.Close()
 	for rows.Next() {
 		var (
 			id     int64
@@ -93,11 +93,15 @@ func (m *AssessmentMapper) Select() ([]entities.Assessment, error) {
 			status string
 		)
 		err = rows.Scan(&id, &date, &status)
+		fmt.Println("Vars:", id, date, status)
 		if err == nil {
 			assessment := entities.Assessment{ID: id, Date: date, StatusName: status}
+			fmt.Println("Assessment:", assessment)
 			assessments = append(assessments, assessment)
 		}
+		fmt.Println("Error:", err)
 	}
+	defer rows.Close()
 	fmt.Println("Mapper GET:", assessments)
 	return assessments, nil
 }
@@ -106,9 +110,9 @@ func (m *AssessmentMapper) Select() ([]entities.Assessment, error) {
 func (m *AssessmentMapper) Insert(newAssessment entities.Assessment) (int64, error) {
 	var insertedId int64
 	insertQuery := `INSERT INTO t_assessment 
-		(a_id, a_date, a_status) 
-		SELECT nextval('assessment_id'), to_timestamp($1,'YYYY-MM-DD HH24:MI:SS'), $2 
-		WHERE NOT EXISTS(SELECT a_id, a_date, a_status FROM t_assessment WHERE a_date = to_timestamp($3,'YYYY-MM-DD HH24:MI:SS'))
+		(a_date, a_status) 
+		SELECT to_timestamp($1,'YYYY-MM-DD HH24:MI:SS'), $2 
+		WHERE NOT EXISTS(SELECT a_date, a_status FROM t_assessment WHERE a_date = to_timestamp($3,'YYYY-MM-DD HH24:MI:SS'))
 		returning a_id;`
 	err := m.db.QueryRow(insertQuery, newAssessment.Date, newAssessment.Status, newAssessment.Date).Scan(&insertedId)
 	if err != nil {
