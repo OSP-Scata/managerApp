@@ -22,11 +22,6 @@ CREATE TABLE IF NOT EXISTS t_assessment (
 	a_status             integer,
 	FOREIGN KEY (a_status) REFERENCES t_assessment_status (a_s_id)
  );
-
-CREATE SEQUENCE IF NOT EXISTS assessment_id
-	START 1
-    INCREMENT BY 1
-	OWNED BY t_assessment.a_id;
 	
 CREATE TABLE IF NOT EXISTS t_interviewer ( 
 	i_id                 serial PRIMARY KEY NOT NULL,
@@ -37,11 +32,6 @@ CREATE TABLE IF NOT EXISTS t_interviewer (
 	i_phone_num          varchar(20),
 	i_position           varchar(100)
  );
-
- CREATE SEQUENCE IF NOT EXISTS interviewer_id
-	START 1
-    INCREMENT BY 1
-	OWNED BY t_interviewer.i_id;
 
 CREATE TABLE IF NOT EXISTS t_candidate ( 
 	c_id                 serial PRIMARY KEY NOT NULL,
@@ -55,11 +45,6 @@ CREATE TABLE IF NOT EXISTS t_candidate (
 	c_status             integer,
 	FOREIGN KEY (c_status) REFERENCES t_candidate_status (c_s_id)
  );
-
-CREATE SEQUENCE IF NOT EXISTS candidate_id
-	START 1
-    INCREMENT BY 1
-	OWNED BY t_candidate.c_id;
 
 CREATE TABLE IF NOT EXISTS toc_assessment_candidate ( 
 	a_c_id               integer PRIMARY KEY NOT NULL,
