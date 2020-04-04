@@ -56,9 +56,9 @@ var addCand = webix.ui({
       id:"addCandidate",
       editable:true,
       elements:[
-        { view:"text", id:"newLastname", name:"surname", label:"Фамилия"},
+        { view:"text", id:"newLastname", name:"lastName", label:"Фамилия"},
         { view:"text", id:"newFirstname", name:"name", label:"Имя"},
-        { view:"text", id:"newMidname", name:"patronymic", label:"Отчество"},
+        { view:"text", id:"newMidname", name:"midName", label:"Отчество"},
         { view:"datepicker", id:"birthDateCand", name:"birthDate", label:"Дата рождения", stringResult:true},
         { view:"text", id:"newEmail", name:"email", label:"E-mail"},
         { view:"text", id:"newPhone", name:"phone", label:"Телефон"},
@@ -80,15 +80,15 @@ var addCand = webix.ui({
 function addPeople(){
     if($$("newLastname").getValue() != ""){
         idCandCounter += 1;
-        let surname = $$("newLastname").getValue(); 
-        let name = $$("newFirstname").getValue();
-        let patronymic = $$("newMidname").getValue();
+        let lastName = $$("newLastname").getValue(); 
+        let firstName = $$("newFirstname").getValue();
+        let midName = $$("newMidname").getValue();
         let email = $$("newEmail").getValue(); 
         let phoneNumber = $$("newPhone").getValue(); 
         let birthDate = $$("birthDateCand").getValue();
         let education = $$("newEducation").getValue()
         console.log(birthDate);
-        createCandidate(surname, name, patronymic, email, phoneNumber, birthDate, education);
+        createCandidate(lastName, firstName, midName, email, phoneNumber, birthDate, education);
         $$("addCandidate").clear();
         this.getParentView().getParentView().getParentView().hide()
     }
@@ -141,13 +141,13 @@ var editCandWindow = webix.ui({
 });
 
 function editCand(){
-    let surname = $$("resurnameCand").getValue();
-    let name = $$("renameCand").getValue();
-    let patronymic = $$("repatronymCand").getValue();
+    let lastName = $$("resurnameCand").getValue();
+    let firstName = $$("renameCand").getValue();
+    let midName = $$("repatronymCand").getValue();
     let email = $$("reemailCand").getValue();
     let phoneNumber = $$("rephoneCand").getValue();
     let birthDate = $$("rebirthDateCand").getValue();
     let education = $$("reeducationCand").getValue();
-    editCandidate(surname, name, patronymic, email, phoneNumber, birthDate, education)
+    editCandidate(lastName, firstName, midName, email, phoneNumber, birthDate, education)
     this.getParentView().getParentView().getParentView().hide()
 }

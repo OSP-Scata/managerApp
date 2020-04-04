@@ -85,18 +85,16 @@ function showCandidateById(){
     xhr.send();
 }
 
-function createCandidate(surname, name, patronymic, email, phone, birthDate, education){
+function createCandidate(lastName, firstName, midName, email, phone, birthDate, education){
     let xhr = new XMLHttpRequest();
     let selectedAssessmentId = $$("assessments").getSelectedItem().ID
     console.log(selectedAssessmentId)
     let newCandidate = {
-        Surname: surname,
-	    Name: name,
-	    Patronymic: patronymic,
+        Surname: lastName,
+	    Name: firstName,
+	    Patronymic: midName,
 	    Email: email,
 	    PhoneNumber: phone,
-	    Resume: resume,
-	    Address: address,
 	    Education: education,
         BirthDate: birthDate,
     }
@@ -113,19 +111,17 @@ function createCandidate(surname, name, patronymic, email, phone, birthDate, edu
     xhr.send(JSON.stringify(newCandidate));
 }
 
-function editCandidate(surname, name, patronymic, email, phone, birthDate, education){
+function editCandidate(lastName, firstName, midName, email, phone, birthDate, education){
     let xhr = new XMLHttpRequest();
     let selectedAssessmentId = $$("assessments").getSelectedItem().ID
     let selectedCandidateId = $$("peopleList").getSelectedItem().ID
     console.log(selectedAssessmentId, selectedCandidateId)
     let editedCandidate = {
-        Surname: surname,
-	    Name: name,
-	    Patronymic: patronymic,
+        Surname: lastName,
+	    Name: firstName,
+	    Patronymic: midName,
 	    Email: email,
 	    PhoneNumber: phone,
-	    Resume: resume,
-	    Address: address,
 	    Education: education,
         BirthDate: birthDate,
     }
