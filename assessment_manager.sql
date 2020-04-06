@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS toc_assessment_candidate (
 	a_c_id               integer PRIMARY KEY NOT NULL,
 	a_c_assessment_id    integer,
 	a_c_candidate_id     integer,
-	a_c_candidate_status varchar(20),
+	a_c_candidate_status integer,
 	FOREIGN KEY (a_c_assessment_id) REFERENCES t_assessment (a_id),
 	FOREIGN KEY (a_c_candidate_id) REFERENCES t_candidate (c_id)
  );

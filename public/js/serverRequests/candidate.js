@@ -22,7 +22,7 @@ function showCandidate(){
     let xhr = new XMLHttpRequest();
     xhr.open("GET", "/assessment/" + selectedAssessmentId + "/candidate");
     xhr.onreadystatechange = function() {
-        if (xhr.status == 200 && xhr.readyState == xhr.DONE) {
+        if (xhr.status == 200 && xhr.readyState == 4) {
             let res = JSON.parse(xhr.response)
             if (res.Result === 1) {
                 webix.message({type:"error", text:res.ErrorText});
@@ -30,7 +30,7 @@ function showCandidate(){
             }
             $$("peopleList").clearAll();
             $$("peopleList").parse(xhr.response);
-            //console.log("showCandidate called")
+            console.log("showCandidate called")
         }
     } 
     xhr.send();

@@ -71,9 +71,9 @@ func (m *CandidateMapper) Select(assessmentId int64) ([]*entities.Candidate, err
 	candidates := make([]*entities.Candidate, 0)
 	//запрос к БД
 	query := `SELECT u.c_id, u.c_last_name, u.c_first_name, u.c_mid_name, u.c_email, u.c_phone_number, 
-		to_char(u.c_birth_date, 'DD.MM.YYYY'), u.c_education, v.c_status 
-		FROM t_candidate u INNER JOIN toc_assessment_candidate d ON u.c_id = d.c_id_candidate 
-		INNER JOIN t_status_candidate v ON d.c_status_candidate = v.c_id WHERE d.c_id_assessment = $1 `
+	to_char(u.c_birth_date, 'DD.MM.YYYY'), u.c_education, v.c_s_name 
+	FROM t_candidate u INNER JOIN toc_assessment_candidate d ON u.c_id = d.a_c_candidate_id 
+	INNER JOIN t_candidate_status v ON d.a_c_candidate_status = v.c_s_id WHERE d.a_c_assessment_id = $1`
 	rows, err := m.db.Query(query, assessmentId)
 	if err != nil {
 		return nil, fmt.Errorf("CandidateMapper::Select:%v", err)
@@ -95,6 +95,7 @@ func (m *CandidateMapper) Select(assessmentId int64) ([]*entities.Candidate, err
 		//добавляем candidate к созданному срезу
 		candidates = append(candidates, candidate)
 	}
+	fmt.Println("Candidates in assessment:", candidates)
 	return candidates, nil
 }
 
@@ -217,7 +218,7 @@ func (m *CandidateMapper) Insert(newCandidate *entities.Candidate, assessmentId 
 	insertQuery := `INSERT INTO t_candidate 
 		(c_last_name, c_first_name, c_mid_name, c_email, c_phone_number, c_birth_date, c_education) 
 		SELECT $1, $2, $3, $4, $5, to_date($6,'YYYY-MM-DD'), $7
-		WHERE NOT EXISTS(SELECT c_last_name, c_first_name, c_mid_name, c_email, c_phone_number, c_birth_date, c_education, c_status FROM t_candidate WHERE c_last_name = $8 AND c_first_name = $9 AND c_mid_name = $10 AND c_birth_date = to_date($11,'YYYY-MM-DD'))
+		WHERE NOT EXISTS(SELECT c_last_name, c_first_name, c_mid_name, c_email, c_phone_number, c_birth_date, c_education, c_status FROM t_candidate WHERE c_last_name = $1 AND c_first_name = $2 AND c_mid_name = $3 AND c_birth_date = to_date($6,'YYYY-MM-DD'))
 		`
 	_, err := m.db.Exec(insertQuery, newCandidate.Surname, newCandidate.Name, newCandidate.Patronymic, newCandidate.Email, newCandidate.PhoneNumber, newCandidate.BirthDate, newCandidate.Education, newCandidate.Surname, newCandidate.Name, newCandidate.Patronymic, newCandidate.BirthDate)
 	if err != nil {
