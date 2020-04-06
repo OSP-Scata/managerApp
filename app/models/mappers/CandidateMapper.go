@@ -218,7 +218,7 @@ func (m *CandidateMapper) Insert(newCandidate *entities.Candidate, assessmentId 
 	insertQuery := `INSERT INTO t_candidate 
 		(c_last_name, c_first_name, c_mid_name, c_email, c_phone_number, c_birth_date, c_education) 
 		SELECT $1, $2, $3, $4, $5, to_date($6,'YYYY-MM-DD'), $7
-		WHERE NOT EXISTS(SELECT c_last_name, c_first_name, c_mid_name, c_email, c_phone_number, c_birth_date, c_education, c_status FROM t_candidate WHERE c_last_name = $1 AND c_first_name = $2 AND c_mid_name = $3 AND c_birth_date = to_date($6,'YYYY-MM-DD'))
+		WHERE NOT EXISTS(SELECT c_last_name, c_first_name, c_mid_name, c_email, c_phone_number, c_birth_date, c_education, c_status FROM t_candidate WHERE c_last_name = $8 AND c_first_name = $9 AND c_mid_name = $10 AND c_birth_date = to_date($11,'YYYY-MM-DD'))
 		`
 	_, err := m.db.Exec(insertQuery, newCandidate.Surname, newCandidate.Name, newCandidate.Patronymic, newCandidate.Email, newCandidate.PhoneNumber, newCandidate.BirthDate, newCandidate.Education, newCandidate.Surname, newCandidate.Name, newCandidate.Patronymic, newCandidate.BirthDate)
 	if err != nil {
@@ -235,14 +235,15 @@ func (m *CandidateMapper) Insert(newCandidate *entities.Candidate, assessmentId 
 	}
 	//добавляем кандидата в таблицу связи toc_assessment_candidate
 	insertQueryToAssess := `INSERT INTO toc_assessment_candidate 
-		(c_id, c_id_assessment, c_id_candidate, c_status_candidate) 
-		SELECT nextval('assessment_candidate_id'), $1, $2, 1 
-		WHERE NOT EXISTS(SELECT c_id, c_id_assessment, c_id_candidate FROM toc_assessment_candidate WHERE c_id_candidate = $3 AND c_id_assessment = $4)`
+		(a_c_assessment_id, a_c_candidate_id, a_c_candidate_status) 
+		SELECT $1, $2, 1 
+		WHERE NOT EXISTS(SELECT a_c_assessment_id, a_c_candidate_id FROM toc_assessment_candidate WHERE a_c_candidate_id = $3 AND a_c_assessment_id = $4)`
 	_, err = m.db.Exec(insertQueryToAssess, assessmentId, insertedId, insertedId, assessmentId)
 
 	if err != nil {
 		return 0, fmt.Errorf("Ошибка вставки кандидата в ассессмент: %v", err)
 	}
+	fmt.Println("New candidate:", insertedId)
 	return insertedId, nil
 }
 

@@ -101,8 +101,8 @@ function createCandidate(lastName, firstName, midName, email, phone, birthDate, 
     console.log("НОВЫЙ КАНДИДАТ:", newCandidate)
     //console.log(JSON.stringify(newCandidate))
     xhr.onreadystatechange = function() {
-        //console.log(xhr.readyState, xhr.status, xhr.responseText)
-        if (xhr.status == 200 && xhr.readyState == xhr.DONE) {
+        console.log(xhr.readyState, xhr.status, xhr.responseText)
+        if (xhr.status == 200 && xhr.readyState == 4) {
             showCandidate(selectedAssessmentId);
         }
     }

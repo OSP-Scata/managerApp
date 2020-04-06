@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS t_candidate (
  );
 
 CREATE TABLE IF NOT EXISTS toc_assessment_candidate ( 
-	a_c_id               integer PRIMARY KEY NOT NULL,
+	a_c_id               serial PRIMARY KEY NOT NULL,
 	a_c_assessment_id    integer,
 	a_c_candidate_id     integer,
 	a_c_candidate_status integer,
@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS toc_assessment_candidate (
  );
 
 CREATE TABLE IF NOT EXISTS toc_assessment_interviewer ( 
-	a_i_id               integer PRIMARY KEY NOT NULL,
+	a_i_id               serial PRIMARY KEY NOT NULL,
 	a_i_assessment_id    integer,
 	a_i_interviewer_id   integer,
 	FOREIGN KEY (a_i_assessment_id) REFERENCES t_assessment (a_id),
