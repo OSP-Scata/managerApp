@@ -114,9 +114,9 @@ func (m *CandidateMapper) SelectById(id int64, assessmentId int64) (*entities.Ca
 	)
 	//обращаемся к БД
 	query := `SELECT u.c_id, u.c_last_name, u.c_first_name, u.c_mid_name, u.c_email, u.c_phone_number, 
-		u.c_birth_date, u.c_education, v.c_status 
-		FROM t_candidate u INNER JOIN toc_assessment_candidate d ON u.c_id = d.c_id_candidate 
-		INNER JOIN t_status_candidate v ON d.c_status_candidate = v.c_id WHERE d.c_id_assessment = $1 AND u.c_id = $2`
+		u.c_birth_date, u.c_education, v.c_s_name 
+		FROM t_candidate u INNER JOIN toc_assessment_candidate d ON u.c_id = d.a_c_candidate_id 
+		INNER JOIN t_candidate_status v ON d.a_c_candidate_status = v.c_s_id WHERE d.a_c_assessment_id = $1 AND u.c_id = $2`
 	//выполняем
 	row := m.db.QueryRow(query, assessmentId, id)
 	//считываем
@@ -153,13 +153,13 @@ func (m *CandidateMapper) SelectStatus(candidateId int64, assessmentId int64) ([
 	statuses := make([]*entities.CandidateStatus, 0)
 	//запросы к БД
 	//получаем родительский статус кандидата
-	query := `SELECT c_id, c_status FROM t_status_candidate 
-		WHERE c_id = (select c_s_fk FROM t_status_candidate where c_id = 
-		(select c_status_candidate FROM toc_assessment_candidate where 
+	query := `SELECT c_s_id, c_s_name FROM t_candidate_status 
+		WHERE c_s_id = (select c_s_fk FROM t_candidate_status where c_s_id = 
+		(select a_c_candidate_status FROM toc_assessment_candidate where 
 		c_id_candidate = $1));`
 	//получаем возможные статусы
-	query2 := `SELECT u.c_id, u.c_status FROM t_status_candidate u INNER JOIN toc_assessment_candidate d ON 
-	d.c_status_candidate = u.c_s_fk WHERE d.c_id_candidate = $1 AND d.c_id_assessment = $2`
+	query2 := `SELECT u.c_s_id, u.c_s_name FROM t_candidate_status u INNER JOIN toc_assessment_candidate d ON 
+	d.a_c_candidate_status = u.c_s_fk WHERE d.a_c_candidate_id = $1 AND d.a_c_assessment_id = $2`
 	rows, err := m.db.Query(query, candidateId)
 	if err != nil {
 		return nil, fmt.Errorf("CandidateMapper::SelectStatus:%v", err)
@@ -192,7 +192,7 @@ func (m *CandidateMapper) SelectStatus(candidateId int64, assessmentId int64) ([
 
 //задать статус кандидата
 func (m *CandidateMapper) SetStatus(newStatus *entities.CandidateStatus, statusId int64, candidateId int64) (int64, error) {
-	insertQuery := `UPDATE toc_assessment_candidate SET c_status_candidate = $1 WHERE c_id_candidate = $2`
+	insertQuery := `UPDATE toc_assessment_candidate SET a_c_candidate_status = $1 WHERE a_c_candidate_id = $2`
 	_, err := m.db.Exec(insertQuery, statusId, candidateId)
 	if err != nil {
 		return 0, fmt.Errorf("Ошибка изменения статуса кандидата: %v", err)

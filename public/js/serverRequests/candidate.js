@@ -165,8 +165,8 @@ function setCandidateStatus(selectedStatusId, status){
         Status: status}
     xhr.open("POST", "/assessment/" + selectedAssessmentId + "/candidate/" + selectedCandidateId + "/status/" + selectedStatusId);
     xhr.onreadystatechange = function() {
+        console.log(xhr.readyState, xhr.status, xhr.responseText)
         if (xhr.status == 200 && xhr.readyState == xhr.DONE) {
-            console.log(xhr.readyState, xhr.status, xhr.responseText)
             showCandidate(selectedAssessmentId);
         }
     }       

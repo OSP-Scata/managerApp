@@ -126,9 +126,9 @@ func (m *InterviewerMapper) Insert(newInterviewer *entities.Interviewer, assessm
 	var insertedId int64
 	//добавление сотрудника к списку сотрудников
 	insertQuery := `INSERT INTO t_interviewer 
-		(i_id, i_last_name, i_first_name, i_mid_name, i_email, i_phone_number, i_position) 
-		SELECT nextval('interviewer_id'), $1, $2, $3, $4, $5, $6 
-		WHERE NOT EXISTS(SELECT i_id, i_last_name, i_first_name, i_mid_name, i_email, i_phone_number, i_position FROM t_interviewer WHERE i_last_name = $7 AND i_first_name = $8 AND i_mid_name = $9 AND i_position = $10)`
+		(i_last_name, i_first_name, i_mid_name, i_email, i_phone_number, i_position) 
+		SELECT $1, $2, $3, $4, $5, $6 
+		WHERE NOT EXISTS(SELECT i_last_name, i_first_name, i_mid_name, i_email, i_phone_number, i_position FROM t_interviewer WHERE i_last_name = $7 AND i_first_name = $8 AND i_mid_name = $9 AND i_position = $10)`
 	_, err := m.db.Exec(insertQuery, newInterviewer.Surname, newInterviewer.Name, newInterviewer.Patronymic, newInterviewer.Email, newInterviewer.PhoneNumber, newInterviewer.Position, newInterviewer.Surname, newInterviewer.Name, newInterviewer.Patronymic, newInterviewer.Position)
 	if err != nil {
 		return 0, fmt.Errorf("Ошибка вставки сотрудника: %v", err)
@@ -144,9 +144,9 @@ func (m *InterviewerMapper) Insert(newInterviewer *entities.Interviewer, assessm
 	}
 	//добавление сотрдуника в таблицу связи toc_assessment_interviewer
 	insertQueryToAssess := `INSERT INTO toc_assessment_interviewer 
-		(a_i_id, a_i_assessment_id, a_i_interviewer_id) 
-		SELECT nextval('assessment_interviewer_id'), $1, $2 
-		WHERE NOT EXISTS(SELECT a_i_id, a_i_assessment_id, a_i_interviewer_id FROM toc_assessment_interviewer WHERE a_i_interviewer_id = $3 AND a_i_assessment_id = $4)`
+		(a_i_assessment_id, a_i_interviewer_id) 
+		SELECT $1, $2 
+		WHERE NOT EXISTS(SELECT a_i_assessment_id, a_i_interviewer_id FROM toc_assessment_interviewer WHERE a_i_interviewer_id = $3 AND a_i_assessment_id = $4)`
 	_, err = m.db.Exec(insertQueryToAssess, assessmentId, insertedId, insertedId, assessmentId)
 	if err != nil {
 		return 0, fmt.Errorf("Ошибка вставки сотрудника в ассессмент: %v", err)
@@ -172,9 +172,9 @@ func (m *InterviewerMapper) InsertInterviewer(newInterviewer *entities.Interview
 	var insertedId int64
 	//добавить к списку
 	insertQuery := `INSERT INTO t_interviewer 
-		(i_id, i_last_name, i_first_name, i_mid_name, i_email, i_phone_number, i_position) 
-		SELECT nextval('interviewer_id'), $1, $2, $3, $4, $5, $6 
-		WHERE NOT EXISTS(SELECT i_id, i_last_name, i_first_name, i_mid_name, i_email, i_phone_number, i_position FROM t_interviewer WHERE i_last_name = $7 AND i_first_name = $8 AND i_mid_name = $9 AND i_position = $10)`
+		(i_last_name, i_first_name, i_mid_name, i_email, i_phone_number, i_position) 
+		SELECT $1, $2, $3, $4, $5, $6 
+		WHERE NOT EXISTS(SELECT i_last_name, i_first_name, i_mid_name, i_email, i_phone_number, i_position FROM t_interviewer WHERE i_last_name = $7 AND i_first_name = $8 AND i_mid_name = $9 AND i_position = $10)`
 	_, err := m.db.Exec(insertQuery, newInterviewer.Surname, newInterviewer.Name, newInterviewer.Patronymic, newInterviewer.Email, newInterviewer.PhoneNumber, newInterviewer.Position, newInterviewer.Surname, newInterviewer.Name, newInterviewer.Patronymic, newInterviewer.Position)
 	if err != nil {
 		return 0, fmt.Errorf("Ошибка вставки сотрудника: %v", err)

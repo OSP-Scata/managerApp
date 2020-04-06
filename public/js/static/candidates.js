@@ -19,12 +19,12 @@ webix.editors.setCandStatus = webix.extend({
 var peopleTable = {
     view:"datatable", id:"peopleList", autoWidth:true, editable:true, select:true, columns:[
         { id:"id", header:"#", width:40, template:"#ID#"},
-        { id:"lastname", header:"Фамилия", width:100, template:"#LastName#"},
-        { id:"firstname", header:"Имя", width:100, template:"#FirstName#"},
-        { id:"midname", header:"Отчество", width:100, template:"#MidName#"},
+        { id:"lastname", header:"Фамилия", width:100, template:"#Surname#"},
+        { id:"firstname", header:"Имя", width:100, template:"#Name#"},
+        { id:"midname", header:"Отчество", width:100, template:"#Patronymic#"},
         { id:"birthdate", header:"Дата рождения", width:120, template:"#BirthDate#"},
         { id:"email", header:"E-mail", width:170, template:"#Email#"},
-        { id:"phone",  header:"Телефон", width:150, template:"#Phone#"},
+        { id:"phone",  header:"Телефон", width:150, template:"#PhoneNumber#"},
         { id:"education", header:"Образование", width:170, template:"#Education#"},
         { id:"status", template:"#StatusName#", editor:"setCandStatus", options:candidateStatus, value:3, header:"Статус", width:120},
     ], on:{onItemDblClick:editPeople}
