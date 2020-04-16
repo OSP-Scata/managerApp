@@ -41,9 +41,7 @@ CREATE TABLE IF NOT EXISTS t_candidate (
 	c_birth_date         timestamp,
 	c_email              varchar(100),
 	c_phone_num          varchar(20),
-	c_education          varchar(200),
-	c_status             integer,
-	FOREIGN KEY (c_status) REFERENCES t_candidate_status (c_s_id)
+	c_education          varchar(200)
  );
 
 CREATE TABLE IF NOT EXISTS toc_assessment_candidate ( 
@@ -53,6 +51,7 @@ CREATE TABLE IF NOT EXISTS toc_assessment_candidate (
 	a_c_candidate_status integer,
 	FOREIGN KEY (a_c_assessment_id) REFERENCES t_assessment (a_id),
 	FOREIGN KEY (a_c_candidate_id) REFERENCES t_candidate (c_id)
+	FOREIGN KEY (a_c_candidate_status) REFERENCES t_candidate_status (c_s_id)
  );
 
 CREATE TABLE IF NOT EXISTS toc_assessment_interviewer ( 
