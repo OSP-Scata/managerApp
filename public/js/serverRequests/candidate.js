@@ -10,8 +10,8 @@ function showAllCandidates(){
                 return
             }
             //$$("interviewerList").clearAll();
-            $$("peopleList").clearAll();
-            $$("peopleList").parse(xhr.response);
+            $$("CandidateList").clearAll();
+            $$("CandidateList").parse(xhr.response);
         }
     }       
     xhr.send();

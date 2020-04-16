@@ -46,35 +46,89 @@ var btnEditCand = {
 
 var addCand = webix.ui({
     view:"window",
-    head:"Добавить участника",
-    modal:true,
-    width:500,
     close:true,
+    modal:true,
     position:"center",
+    width:500,
     body:{
-      view:"form",
-      id:"addCandidate",
-      editable:true,
-      elements:[
-        { view:"text", id:"newLastname", name:"lastName", label:"Фамилия"},
-        { view:"text", id:"newFirstname", name:"name", label:"Имя"},
-        { view:"text", id:"newMidname", name:"midName", label:"Отчество"},
-        { view:"datepicker", id:"birthDateCand", name:"birthDate", label:"Дата рождения", stringResult:true},
-        { view:"text", id:"newEmail", name:"email", label:"E-mail"},
-        { view:"text", id:"newPhone", name:"phone", label:"Телефон"},
-        { view:"text", id:"newEducation", name:"education", label:"Образование"},
-        { cols:[{ view:"button", value:"Добавить", click:addPeople},
-        { view:"button", value:"Отмена", click:function(){
-            $$("newLastname").setValue("");
-            $$("newFirstname").setValue("");
-            $$("newMidname").setValue("");
-            $$("newEmail").setValue("");
-            $$("newPhone").setValue("");
-            this.getTopParentView().hide(); 
-          }}]}
-      ]
+        view:"form", id:"form", scroll:false,
+        elements:[
+        {cols:[
+            { view:"button", value:"Создать", click: function () {
+                createCand.show();
+                this.getTopParentView().hide();
+            }},
+            { view:"button", value:"Выбрать", click: function(){
+                showAllCandidates();
+                candidateList.show();
+                this.getTopParentView().hide(); }
+            },
+        ]}]
     },
-    move:true
+    move:true,
+});
+
+var createCand = webix.ui({
+    view:"window",
+    close:true,
+    modal:true,
+    position:"center",
+    width:500,
+    body:{view:"form",
+        id:"addCandidate",
+        editable:true,
+        elements:[
+            { view:"text", id:"newLastname", name:"lastName", label:"Фамилия"},
+            { view:"text", id:"newFirstname", name:"name", label:"Имя"},
+            { view:"text", id:"newMidname", name:"midName", label:"Отчество"},
+            { view:"datepicker", id:"birthDateCand", name:"birthDate", label:"Дата рождения", stringResult:true},
+            { view:"text", id:"newEmail", name:"email", label:"E-mail"},
+            { view:"text", id:"newPhone", name:"phone", label:"Телефон"},
+            { view:"text", id:"newEducation", name:"education", label:"Образование"},
+            { cols:[{ view:"button", value:"Добавить", click:addPeople},
+            { view:"button", value:"Отмена", click:function(){
+                $$("newLastname").setValue("");
+                $$("newFirstname").setValue("");
+                $$("newMidname").setValue("");
+                $$("newEmail").setValue("");
+                $$("newPhone").setValue("");
+                this.getTopParentView().hide(); 
+            }}]}
+        ]
+    }
+});
+
+var candidateList = webix.ui({
+    view:"window",
+    head: 'Выбрать кандидата',
+    position: 'center',
+    
+    body:{view:"form", id:"selectCand",
+        elements:[
+            {view:"list",
+            id: "CandidateList",
+            template:"ФИО: #Surname# #Name# #Patronymic#",
+            select:true,
+        },
+            {cols:[{ view: 'button', value: 'Добавить', click: function(){
+                let selectedCandidateId = $$('CandidateList').getSelectedItem()
+                console.log(selectedCandidateId);
+                if(!$$("CandidateList").getSelectedId()){
+                    webix.message("Кандидат не выбран из списка");
+                    return;
+                }
+                else{
+                    createCandidate(selectedCandidateId.Surname, selectedCandidateId.Name, selectedCandidateId.Patronymic,
+                    selectedCandidateId.Email, selectedCandidateId.PhoneNumber, 
+                    selectedCandidateId.BirthDate, selectedCandidateId.Education);
+                    this.getParentView().getParentView().hide()
+                }
+        }},
+        { view:"button", value:"Отмена", click:function(){
+            this.getTopParentView().hide(); 
+          }},
+        ]}
+    ]}
 });
 
 function addPeople(){
