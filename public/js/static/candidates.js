@@ -26,7 +26,7 @@ var peopleTable = {
         { id:"email", header:"E-mail", width:170, template:"#Email#"},
         { id:"phone",  header:"Телефон", width:150, template:"#PhoneNumber#"},
         { id:"education", header:"Образование", width:170, template:"#Education#"},
-        { id:"status", template:"#StatusName#", editor:"setCandStatus", options:candidateStatus, value:3, header:"Статус", width:120},
+        { id:"status", template:"#StatusName#", view:"richselect", value:3, header:"Статус", width:120},
     ], on:{onItemDblClick:editPeople}
 }
 

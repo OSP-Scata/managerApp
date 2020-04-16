@@ -8,6 +8,7 @@ module:testrunner
 
 # Главная страница и блок авторизации
 GET     /                                                                   App.Index
+GET     /test.json                                                          App.Test
 GET     /login                                      						CAuth.Login
 GET     /logout                                      						CAuth.Logout
 
@@ -18,7 +19,8 @@ PUT 	/assessment 														CAssessment.PutAssessment
 GET 	/assessment/:assessmentID 											CAssessment.GetAssessmentByID
 POST 	/assessment/:assessmentID 											CAssessment.PostAssessmentByID
 DELETE 	/assessment/:assessmentID 											CAssessment.DeleteAssessmentByID
-GET 	/assessment/:assessmentID/status 									CAssessment.GetStatus
+#GET 	/assessment/:assessmentID/status 									CAssessment.GetStatus
+GET 	/assessment_status.json 									        CAssessment.GetStatus2
 POST 	/assessment/:assessmentID/status/:statusID							CAssessment.SetStatus
 
 # Блок кандидатов

@@ -108,6 +108,7 @@ func (c *CCandidate) GetCandidateStatus() revel.Result {
 	return c.RenderJSON(helpers.Success(candidate))
 }
 
+//установить статус кандидата
 func (c *CCandidate) SetStatus(newStatus entities.CandidateStatus) revel.Result {
 	c.Init()
 	sCandidateId := c.Params.Get("candidateID")
@@ -206,4 +207,5 @@ func (c *CCandidate) SetStatusesForAll() revel.Result {
 	}
 	return c.RenderJSON(helpers.Success(updatedStatus))
 	//return c.RenderJSON(candidates)
-}*/
+}
+*/

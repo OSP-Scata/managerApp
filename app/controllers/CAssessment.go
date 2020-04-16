@@ -92,6 +92,7 @@ func (c *CAssessment) PutAssessment(newAssessment entities.Assessment) revel.Res
 }
 
 //получить возможные статусы ассессмента
+/*
 func (c *CAssessment) GetStatus() revel.Result {
 	c.Init()
 
@@ -107,6 +108,16 @@ func (c *CAssessment) GetStatus() revel.Result {
 		return c.RenderJSON(helpers.Failed(err))
 	}
 	return c.RenderJSON(helpers.Success(assessment))
+}*/
+
+//получить возможные статусы ассессмента в файл
+func (c *CAssessment) GetStatus2() revel.Result {
+	c.Init()
+	assessment, err := c.provider.GetAssessmentStatus()
+	if err != nil {
+		return c.RenderJSON(helpers.Failed(err))
+	}
+	return c.RenderJSON(assessment)
 }
 
 func (c *CAssessment) SetStatus(newStatus entities.AssessmentStatus) revel.Result {

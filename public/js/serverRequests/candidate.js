@@ -2,7 +2,7 @@ function showAllCandidates(){
     let xhr = new XMLHttpRequest();
     xhr.open("GET", "/candidate");
     xhr.onreadystatechange = function() {
-        console.log(xhr.readyState, xhr.status, xhr.responseText)
+        //console.log(xhr.readyState, xhr.status, xhr.responseText)
         if (xhr.status == 200 && xhr.readyState == xhr.DONE) {
             let res = JSON.parse(xhr.response)
             if (res.Result === 1) {
@@ -36,35 +36,6 @@ function showCandidate(){
     xhr.send();
 }
 
-function setStatusesInAssessment(selectedAssessmentId, selectedStatusId){
-    let allCandidateStatusId = 0
-    let allCandidateStatus = ""
-    if (selectedStatusId == 2) {
-        allCandidateStatusId = 4
-        allCandidateStatus = "Завершил"
-    }
-    else if (selectedStatusId == 3) {
-        allCandidateStatusId = 5
-        allCandidateStatus = "Не завершил"
-    }
-    //console.log(allCandidateStatusId, allCandidateStatus)
-    let xhr = new XMLHttpRequest();
-    xhr.open("POST", "/assessment/" + selectedAssessmentId + "/candidate");
-    xhr.onreadystatechange = function() {
-        if (xhr.status == 200 && xhr.readyState == xhr.DONE) {
-            let res = JSON.parse(xhr.response)
-            if (res.Result === 1) {
-                webix.message({type:"error", text:res.ErrorText});
-                return
-            }
-            $$("peopleList").clearAll();
-            $$("peopleList").parse(xhr.response);
-            //console.log("showCandidate called")
-        }
-    } 
-    xhr.send(JSON.stringify(allCandidateStatusId, allCandidateStatus));
-}
-
 function showCandidateById(){
     let selectedAssessmentId = $$("assessments").getSelectedItem().ID
     let selectedCandidateId = $$("peopleList").getSelectedItem().ID
@@ -77,7 +48,7 @@ function showCandidateById(){
                 webix.message({type:"error", text:res.ErrorText});
                 return
             }
-            console.log("КАНДИДАТ: ", res.Data); 
+            //console.log("КАНДИДАТ: ", res.Data); 
             $$("editForm").parse(res.Data);
             $$("rebirthDateCand").setValue(new Date(res.Data.BirthDate));
         }
@@ -88,7 +59,7 @@ function showCandidateById(){
 function createCandidate(lastName, firstName, midName, email, phone, birthDate, education){
     let xhr = new XMLHttpRequest();
     let selectedAssessmentId = $$("assessments").getSelectedItem().ID
-    console.log(selectedAssessmentId)
+    //console.log(selectedAssessmentId)
     let newCandidate = {
         Surname: lastName,
 	    Name: firstName,
@@ -98,10 +69,10 @@ function createCandidate(lastName, firstName, midName, email, phone, birthDate, 
 	    Education: education,
         BirthDate: birthDate,
     }
-    console.log("НОВЫЙ КАНДИДАТ:", newCandidate)
+    //console.log("НОВЫЙ КАНДИДАТ:", newCandidate)
     //console.log(JSON.stringify(newCandidate))
     xhr.onreadystatechange = function() {
-        console.log(xhr.readyState, xhr.status, xhr.responseText)
+        //console.log(xhr.readyState, xhr.status, xhr.responseText)
         if (xhr.status == 200 && xhr.readyState == 4) {
             showCandidate(selectedAssessmentId);
         }
@@ -125,10 +96,10 @@ function editCandidate(lastName, firstName, midName, email, phone, birthDate, ed
 	    Education: education,
         BirthDate: birthDate,
     }
-    console.log("ИЗМЕНЁННЫЙ КАНДИДАТ:", editedCandidate)
+    //console.log("ИЗМЕНЁННЫЙ КАНДИДАТ:", editedCandidate)
     //console.log(JSON.stringify(newCandidate))
     xhr.onreadystatechange = function() {
-        console.log(xhr.readyState, xhr.status, xhr.responseText)
+        //console.log(xhr.readyState, xhr.status, xhr.responseText)
         if (xhr.status == 200 && xhr.readyState == xhr.DONE) {
             showCandidate(selectedAssessmentId);
         }

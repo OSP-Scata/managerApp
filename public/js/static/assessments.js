@@ -1,7 +1,7 @@
 var statusList = [ 
     { id:1, value:"Назначен"}, 
-    { id:2, value:"Проведен"}, 
-    { id:3, value:"Не проведен"}
+    { id:2, value:"Проведён"}, 
+    { id:3, value:"Отменён"}
 ]
 
 webix.editors.setStatus = webix.extend({
@@ -22,8 +22,8 @@ var assessmentTable = {
         select: true,
         columns:[
             //{ id:"countCand", header:"Участники", width: 100},
-            { id:"status", name:"status", template:"#StatusName#", header:"Статус",
-                width: 130, editor:"setStatus", options:statusList,
+            { id:"changeStatus", template:"#StatusName#", header:"Статус",
+                width: 170, editor:"setStatus", options:statusList
             },
             { id:"date", template:" #Date# <span class='webix_icon wxi-trash' title='Удалить ассессмент'></span>",
             header:["Дата ассессмента", {content:"textFilter"}], sort:"string", width: 200},
@@ -41,7 +41,11 @@ var assessmentTable = {
         },
         on: {
             onItemClick: function(){
+                //showAssessmentStatus();
+                //console.log("Returned:" + data)
+                //$$("changeStatus").parse(data);
                 //$$('peopleList').parse(people);
+                //$$("status").parse();
                 showCandidate();
                 showInterviewer();
                 //$$('interviewerList').parse(interviewer);

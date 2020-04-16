@@ -122,7 +122,42 @@ func (m *AssessmentMapper) Insert(newAssessment entities.Assessment) (int64, err
 	return insertedId, nil
 }
 
+func (m *AssessmentMapper) SelectStatus() ([]*entities.AssessmentStatus, error) {
+	var (
+		c_id     int64
+		c_status string
+	)
+	statuses := make([]*entities.AssessmentStatus, 0)
+	query := `SELECT a_s_id, a_s_name FROM t_assessment_status` //u INNER JOIN t_assessment d ON a_id = $1`
+	rows, err := m.db.Query(query)
+	if err != nil {
+		return nil, fmt.Errorf("Ошибка выбора всех статусов:%v", err)
+	}
+	defer rows.Close()
+	//считываем данные
+	for rows.Next() {
+		rows.Scan(&c_id, &c_status)
+		status := &entities.AssessmentStatus{
+			ID:    c_id,
+			Value: c_status,
+		}
+		statuses = append(statuses, status)
+	}
+	fmt.Println("Statuses:", statuses)
+	return statuses, nil
+}
+
+func (m *AssessmentMapper) SetCandidateStatuses(statusId int64, assessmentId int64) (int64, error) {
+	updateQuery := `UPDATE toc_assessment_candidate SET a_c_candidate_status = $1 WHERE a_c_assessment_id = $2`
+	_, err := m.db.Exec(updateQuery, statusId, assessmentId)
+	if err != nil {
+		return 0, fmt.Errorf("Ошибка изменения статуса кандидатов ассессмента: %v", err)
+	}
+	return assessmentId, nil
+}
+
 //получить статусы
+/*
 func (m *AssessmentMapper) SelectStatus(assessmentId int64) ([]*entities.AssessmentStatus, error) {
 	var (
 		c_id     int64
@@ -141,12 +176,13 @@ func (m *AssessmentMapper) SelectStatus(assessmentId int64) ([]*entities.Assessm
 		rows.Scan(&c_id, &c_status)
 		status := &entities.AssessmentStatus{
 			ID:   c_id,
-			Name: c_status,
+			Value: c_status,
 		}
 		statuses = append(statuses, status)
 	}
 	return statuses, nil
 }
+*/
 
 //задать статус ассессменту
 func (m *AssessmentMapper) SetStatus(newStatus *entities.AssessmentStatus, statusId int64, assessmentId int64) (int64, error) {
@@ -154,6 +190,12 @@ func (m *AssessmentMapper) SetStatus(newStatus *entities.AssessmentStatus, statu
 	_, err := m.db.Exec(insertQuery, statusId, assessmentId)
 	if err != nil {
 		return 0, fmt.Errorf("Ошибка изменения статуса ассессмента: %v", err)
+	}
+	if statusId == 2 {
+		m.SetCandidateStatuses(3, assessmentId)
+	}
+	if statusId == 3 {
+		m.SetCandidateStatuses(4, assessmentId)
 	}
 	return assessmentId, nil
 }

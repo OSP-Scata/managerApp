@@ -200,16 +200,16 @@ func (m *CandidateMapper) SetStatus(newStatus *entities.CandidateStatus, statusI
 	return statusId, nil
 }
 
-//задать статусы кандидатов в ассессменте
-/*
-func (m *CandidateMapper) SetAllStatus(assessmentId int64, statusId int64) {
-	query1 := `SELECT u.c_id, u.c_last_name, u.c_first_name, u.c_mid_name, u.c_email, u.c_phone_number,
-		to_char(u.c_birth_date, 'DD.MM.YYYY'), u.c_education, v.c_status
-		FROM t_candidate u INNER JOIN toc_assessment_candidate d ON u.c_id = d.c_id_candidate
-		INNER JOIN t_status_candidate v ON d.c_status_candidate = v.c_id WHERE d.c_id_assessment = $1`
-	query2 := `UPDATE toc_assessment_candidate SET c_status_candidate = $2 WHERE c_id_assessment = $1`
+//задать статус кандидата
+func (m *CandidateMapper) SetStatus2(newStatus *entities.CandidateStatus, statusId int64, candidateId int64) (int64, error) {
+	insertQuery := `UPDATE toc_assessment_candidate SET a_c_candidate_status = $1 WHERE a_c_candidate_id = $2`
+	_, err := m.db.Exec(insertQuery, statusId, candidateId)
+	if err != nil {
+		return 0, fmt.Errorf("Ошибка изменения статуса кандидата: %v", err)
+	}
+	return statusId, nil
 }
-*/
+
 //создание кандидата
 func (m *CandidateMapper) Insert(newCandidate *entities.Candidate, assessmentId int64) (int64, error) {
 	var insertedId int64
@@ -218,7 +218,7 @@ func (m *CandidateMapper) Insert(newCandidate *entities.Candidate, assessmentId 
 	insertQuery := `INSERT INTO t_candidate 
 		(c_last_name, c_first_name, c_mid_name, c_email, c_phone_number, c_birth_date, c_education) 
 		SELECT $1, $2, $3, $4, $5, to_date($6,'YYYY-MM-DD'), $7
-		WHERE NOT EXISTS(SELECT c_last_name, c_first_name, c_mid_name, c_email, c_phone_number, c_birth_date, c_education, c_status FROM t_candidate WHERE c_last_name = $8 AND c_first_name = $9 AND c_mid_name = $10 AND c_birth_date = to_date($11,'YYYY-MM-DD'))
+		WHERE NOT EXISTS(SELECT c_last_name, c_first_name, c_mid_name, c_email, c_phone_number, c_birth_date, c_education FROM t_candidate WHERE c_last_name = $8 AND c_first_name = $9 AND c_mid_name = $10 AND c_birth_date = to_date($11,'YYYY-MM-DD'))
 		`
 	_, err := m.db.Exec(insertQuery, newCandidate.Surname, newCandidate.Name, newCandidate.Patronymic, newCandidate.Email, newCandidate.PhoneNumber, newCandidate.BirthDate, newCandidate.Education, newCandidate.Surname, newCandidate.Name, newCandidate.Patronymic, newCandidate.BirthDate)
 	if err != nil {
