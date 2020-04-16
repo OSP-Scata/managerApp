@@ -3,9 +3,10 @@ package providers
 import (
 	"database/sql"
 	"fmt"
+	"managerApp/app/helpers"
 	"managerApp/app/models/entities"
 	"managerApp/app/models/mappers"
-	"managerApp/app/helpers"
+
 	_ "github.com/lib/pq"
 	_ "github.com/revel/revel"
 )
@@ -88,9 +89,9 @@ func (p *AssessmentProvider) GetAssessmentById(id int64) (*entities.Assessment, 
 }
 
 // получить возможные статусы ассессмента
-func (p *AssessmentProvider) GetAssessmentStatus(id int64) ([]*entities.AssessmentStatus, error) {
+func (p *AssessmentProvider) GetAssessmentStatus() ([]*entities.AssessmentStatus, error) {
 	defer p.db.Close()
-	assessment, err := p.assessments.SelectStatus(id)
+	assessment, err := p.assessments.SelectStatus()
 	return assessment, err
 }
 

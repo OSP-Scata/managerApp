@@ -1,18 +1,19 @@
 package controllers
 
 import (
-	"managerApp/app/helpers"
-	"managerApp/app/models/providers"
-	"managerApp/app/models/entities"
 	"database/sql"
-	_"encoding/base64"
+	_ "encoding/base64"
 	"encoding/json"
 	"fmt"
+	"managerApp/app/helpers"
+	"managerApp/app/models/entities"
+	"managerApp/app/models/providers"
+
 	//"strings"
 
 	"io/ioutil"
 
-	_"log"
+	_ "log"
 	"strconv"
 
 	"github.com/revel/revel"
@@ -22,7 +23,7 @@ type CAssessment struct {
 	*revel.Controller
 	provider *providers.AssessmentProvider
 	//assessments *mappers.AssessmentMapper
-	db       *sql.DB
+	db *sql.DB
 }
 
 func (c *CAssessment) Init() {
@@ -76,6 +77,7 @@ func (c *CAssessment) GetAssessments() revel.Result {
 	if err != nil {
 		panic(err)
 	}
+	fmt.Println("GET:", assessments)
 	return c.RenderJSON(assessments)
 }
 
@@ -85,9 +87,12 @@ func (c *CAssessment) PutAssessment(newAssessment entities.Assessment) revel.Res
 	if err != nil {
 		return c.RenderJSON(helpers.Failed(err))
 	}
+	fmt.Println("PUT:", createdAssessment)
 	return c.RenderJSON(helpers.Success(createdAssessment))
 }
+
 //получить возможные статусы ассессмента
+/*
 func (c *CAssessment) GetStatus() revel.Result {
 	c.Init()
 
@@ -103,7 +108,18 @@ func (c *CAssessment) GetStatus() revel.Result {
 		return c.RenderJSON(helpers.Failed(err))
 	}
 	return c.RenderJSON(helpers.Success(assessment))
+}*/
+
+//получить возможные статусы ассессмента в файл
+func (c *CAssessment) GetStatus2() revel.Result {
+	c.Init()
+	assessment, err := c.provider.GetAssessmentStatus()
+	if err != nil {
+		return c.RenderJSON(helpers.Failed(err))
+	}
+	return c.RenderJSON(assessment)
 }
+
 func (c *CAssessment) SetStatus(newStatus entities.AssessmentStatus) revel.Result {
 	c.Init()
 	sAssessmentId := c.Params.Get("assessmentID")

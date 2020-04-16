@@ -3,9 +3,10 @@ package providers
 import (
 	"database/sql"
 	"fmt"
+	"managerApp/app/helpers"
 	"managerApp/app/models/entities"
 	"managerApp/app/models/mappers"
-	"managerApp/app/helpers"
+
 	_ "github.com/lib/pq"
 )
 
@@ -14,8 +15,8 @@ type CandidateProvider struct {
 	candidates *mappers.CandidateMapper
 }
 
+//подключение к БД
 func (p *CandidateProvider) Init() error {
-	//подключение к БД
 	var err error
 	p.db, err = helpers.DBInit()
 	if err != nil {
@@ -61,7 +62,6 @@ func (p *CandidateProvider) GetCandidateById(id int64, assessmentId int64) (*ent
 //добавить кандидата в выбранный ассессмент
 func (p *CandidateProvider) PutCandidate(newCandidate *entities.Candidate, assessmentId int64) (*entities.Candidate, error) {
 	defer p.db.Close()
-
 	//добавляем кандидата
 	id, err := p.candidates.Insert(newCandidate, assessmentId)
 	if err != nil {
@@ -69,7 +69,6 @@ func (p *CandidateProvider) PutCandidate(newCandidate *entities.Candidate, asses
 			return nil, fmt.Errorf("CandidateProvider::PutCandidate:%v", err)
 		}
 	}
-
 	//возвращаем добавленного
 	createdCandidate, err := p.candidates.SelectById(id, assessmentId)
 	if err != nil {
@@ -81,7 +80,6 @@ func (p *CandidateProvider) PutCandidate(newCandidate *entities.Candidate, asses
 //изменить кандидата
 func (p *CandidateProvider) PostCandidate(newCandidate *entities.Candidate, candidateId int64, assessmentId int64) (*entities.Candidate, error) {
 	defer p.db.Close()
-
 	//изменяем кадидата
 	id, err := p.candidates.Update(newCandidate, candidateId)
 	if err != nil {
@@ -89,7 +87,6 @@ func (p *CandidateProvider) PostCandidate(newCandidate *entities.Candidate, cand
 			return nil, fmt.Errorf("CandidateProvider::PostCandidate:%v", err)
 		}
 	}
-
 	//возвращаем изменённого кандидата
 	updatedCandidate, err := p.candidates.SelectById(id, assessmentId)
 	if err != nil {
@@ -121,3 +118,11 @@ func (p *CandidateProvider) SetCandidateStatus(newStatus *entities.CandidateStat
 	status, err := p.candidates.SetStatus(newStatus, statusId, assessmentId)
 	return status, err
 }
+
+/*
+//задать статусы всех кандидатов в выбранном ассессменте
+func (p *CandidateProvider) SetAllCandidateStatus(newStatus *entities.CandidateStatus, statusId int64, assessmentId int64) (int64, error) {
+	defer p.db.Close()
+	status, err := p.candidates.SetStatus(newStatus, statusId, assessmentId)
+	return status, err
+}*/

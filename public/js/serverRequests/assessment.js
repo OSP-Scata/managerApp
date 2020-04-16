@@ -1,15 +1,17 @@
 function sendAssessment(datePick){
     let xhr = new XMLHttpRequest();
     let newAssessment = {Date: datePick}
-    console.log(JSON.stringify(newAssessment))
-    xhr.onreadystatechange = function() {
-        console.log(xhr.readyState, xhr.status, xhr.responseText)
-    }
+    //console.log(JSON.stringify(newAssessment))
+    /*xhr.onreadystatechange = function() {
+        //console.log(xhr.readyState, xhr.status, xhr.responseText)
+    }*/
     xhr.open("PUT", "/assessment", true);
     xhr.setRequestHeader("Content-Type", "application/json; charset=UTF-8");       
     xhr.send(JSON.stringify(newAssessment));
-    if (xhr.status == 200) {
-        showAssessment();
+    xhr.onreadystatechange = function() {
+        if (xhr.status == 200 && xhr.readyState == 4) {
+            showAssessment();
+        }
     }
 }
 
@@ -20,9 +22,9 @@ function showAssessment(){
     xhr.onreadystatechange = function() {
         //console.log(xhr.readyState, xhr.status, xhr.responseText)
         if (xhr.status == 200 && xhr.readyState == 4) {
-            console.log(xhr.readyState, xhr.status, xhr.responseText)
+            //console.log(xhr.readyState, xhr.status, xhr.responseText)
             let res = JSON.parse(xhr.response)
-            if (res.Result == 1) {
+            if (res.Result === 1) {
                 webix.message({type:"error", text:res.ErrorText});
                 return
             }
@@ -39,7 +41,10 @@ function removeAssessment(){
     let xhr = new XMLHttpRequest();
     xhr.open("DELETE", "/assessment/" +selectedAssessmentId);
     xhr.onreadystatechange = function() {
-        console.log(xhr.readyState, xhr.status, xhr.responseText)
+        //console.log(xhr.readyState, xhr.status, xhr.responseText)
+        if (xhr.status == 200 && xhr.readyState == 4) {
+            showAssessment()
+        }
     }       
     xhr.send();
 }
@@ -51,7 +56,7 @@ function updateAssessment(datePick){
     let xhr = new XMLHttpRequest();
     xhr.open("POST", "/assessment/" + selectedAssessmentId, true);
     xhr.onreadystatechange = function() {
-        console.log(xhr.readyState, xhr.status, xhr.responseText)
+        //console.log(xhr.readyState, xhr.status, xhr.responseText)
         if (xhr.status == 200 && xhr.readyState == 4) {
             showAssessment();
         }
@@ -62,9 +67,15 @@ function updateAssessment(datePick){
 function showAssessmentStatus(){
     let xhr = new XMLHttpRequest();
     let selectedAssessmentId = $$("assessments").getSelectedItem().ID
-    xhr.open("GET", "/assessment/" + selectedAssessmentId + "/status");
+    //xhr.open("GET", "/assessment/" + selectedAssessmentId + "/status");
+    xhr.open("GET", "assessment_status.json");
     xhr.onreadystatechange = function() {
-        console.log(xhr.readyState, xhr.status, xhr.responseText)
+        if (xhr.status == 200 && xhr.readyState == 4) {
+            let res = JSON.parse(xhr.response)
+            //$$("changeStatus").clearAll();
+            //$$("changeStatus").parse(res)
+            //console.log("GET result:" + JSON.stringify(res))
+        }
     }
     xhr.send();
 }
@@ -74,13 +85,16 @@ function setAssessmentStatus(selectedStatusId, status){
     let xhr = new XMLHttpRequest();
     let newStatus = {ID: selectedStatusId,
         Status: status}
-    console.log(JSON.stringify(newStatus));
+    //console.log(JSON.stringify(newStatus));
     xhr.open("POST", "/assessment/" + selectedAssessmentId + "/status/" + selectedStatusId, true);
     xhr.onreadystatechange = function() {
-        console.log(xhr.readyState, xhr.status, xhr.responseText)
+        //console.log(xhr.readyState, xhr.status, xhr.responseText)
         if (xhr.status == 200 && xhr.readyState == 4) {
             showAssessment();
+            showCandidateStatus();
+            showCandidate()
         }
     }
+    //setStatusesInAssessment(selectedAssessmentId, selectedStatusId)
     xhr.send(JSON.stringify(newStatus));
 }

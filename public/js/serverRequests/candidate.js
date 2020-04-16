@@ -2,7 +2,7 @@ function showAllCandidates(){
     let xhr = new XMLHttpRequest();
     xhr.open("GET", "/candidate");
     xhr.onreadystatechange = function() {
-        console.log(xhr.readyState, xhr.status, xhr.responseText)
+        //console.log(xhr.readyState, xhr.status, xhr.responseText)
         if (xhr.status == 200 && xhr.readyState == xhr.DONE) {
             let res = JSON.parse(xhr.response)
             if (res.Result === 1) {
@@ -10,8 +10,8 @@ function showAllCandidates(){
                 return
             }
             //$$("interviewerList").clearAll();
-            $$("peopleList").clearAll();
-            $$("peopleList").parse(xhr.response);
+            $$("CandidateList").clearAll();
+            $$("CandidateList").parse(xhr.response);
         }
     }       
     xhr.send();
@@ -22,7 +22,7 @@ function showCandidate(){
     let xhr = new XMLHttpRequest();
     xhr.open("GET", "/assessment/" + selectedAssessmentId + "/candidate");
     xhr.onreadystatechange = function() {
-        if (xhr.status == 200 && xhr.readyState == xhr.DONE) {
+        if (xhr.status == 200 && xhr.readyState == 4) {
             let res = JSON.parse(xhr.response)
             if (res.Result === 1) {
                 webix.message({type:"error", text:res.ErrorText});
@@ -30,7 +30,7 @@ function showCandidate(){
             }
             $$("peopleList").clearAll();
             $$("peopleList").parse(xhr.response);
-            //console.log("showCandidate called")
+            console.log("showCandidate called")
         }
     } 
     xhr.send();
@@ -48,7 +48,7 @@ function showCandidateById(){
                 webix.message({type:"error", text:res.ErrorText});
                 return
             }
-            console.log("КАНДИДАТ: ", res.Data); 
+            //console.log("КАНДИДАТ: ", res.Data); 
             $$("editForm").parse(res.Data);
             $$("rebirthDateCand").setValue(new Date(res.Data.BirthDate));
         }
@@ -56,26 +56,24 @@ function showCandidateById(){
     xhr.send();
 }
 
-function createCandidate(surname, name, patronymic, email, phone, address, birthDate, education, resume){
+function createCandidate(lastName, firstName, midName, email, phone, birthDate, education){
     let xhr = new XMLHttpRequest();
     let selectedAssessmentId = $$("assessments").getSelectedItem().ID
-    console.log(selectedAssessmentId)
+    //console.log(selectedAssessmentId)
     let newCandidate = {
-        Surname: surname,
-	    Name: name,
-	    Patronymic: patronymic,
+        Surname: lastName,
+	    Name: firstName,
+	    Patronymic: midName,
 	    Email: email,
 	    PhoneNumber: phone,
-	    Resume: resume,
-	    Address: address,
 	    Education: education,
         BirthDate: birthDate,
     }
-    console.log("НОВЫЙ КАНДИДАТ:", newCandidate)
+    //console.log("НОВЫЙ КАНДИДАТ:", newCandidate)
     //console.log(JSON.stringify(newCandidate))
     xhr.onreadystatechange = function() {
         //console.log(xhr.readyState, xhr.status, xhr.responseText)
-        if (xhr.status == 200 && xhr.readyState == xhr.DONE) {
+        if (xhr.status == 200 && xhr.readyState == 4) {
             showCandidate(selectedAssessmentId);
         }
     }
@@ -84,26 +82,24 @@ function createCandidate(surname, name, patronymic, email, phone, address, birth
     xhr.send(JSON.stringify(newCandidate));
 }
 
-function editCandidate(surname, name, patronymic, email, phone, address, birthDate, education, resume){
+function editCandidate(lastName, firstName, midName, email, phone, birthDate, education){
     let xhr = new XMLHttpRequest();
     let selectedAssessmentId = $$("assessments").getSelectedItem().ID
     let selectedCandidateId = $$("peopleList").getSelectedItem().ID
     console.log(selectedAssessmentId, selectedCandidateId)
     let editedCandidate = {
-        Surname: surname,
-	    Name: name,
-	    Patronymic: patronymic,
+        Surname: lastName,
+	    Name: firstName,
+	    Patronymic: midName,
 	    Email: email,
 	    PhoneNumber: phone,
-	    Resume: resume,
-	    Address: address,
 	    Education: education,
         BirthDate: birthDate,
     }
-    console.log("ИЗМЕНЁННЫЙ КАНДИДАТ:", editedCandidate)
+    //console.log("ИЗМЕНЁННЫЙ КАНДИДАТ:", editedCandidate)
     //console.log(JSON.stringify(newCandidate))
     xhr.onreadystatechange = function() {
-        console.log(xhr.readyState, xhr.status, xhr.responseText)
+        //console.log(xhr.readyState, xhr.status, xhr.responseText)
         if (xhr.status == 200 && xhr.readyState == xhr.DONE) {
             showCandidate(selectedAssessmentId);
         }
@@ -140,8 +136,8 @@ function setCandidateStatus(selectedStatusId, status){
         Status: status}
     xhr.open("POST", "/assessment/" + selectedAssessmentId + "/candidate/" + selectedCandidateId + "/status/" + selectedStatusId);
     xhr.onreadystatechange = function() {
+        console.log(xhr.readyState, xhr.status, xhr.responseText)
         if (xhr.status == 200 && xhr.readyState == xhr.DONE) {
-            console.log(xhr.readyState, xhr.status, xhr.responseText)
             showCandidate(selectedAssessmentId);
         }
     }       

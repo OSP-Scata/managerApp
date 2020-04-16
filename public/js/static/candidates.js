@@ -1,10 +1,10 @@
 var candidateStatus = [
-    { id:1, value:"Приглашен"}, 
-    { id:2, value:"Пришел"}, 
-    { id:3, value:"Не пришел"},
-    { id:4, value:"Завершил"}, 
-    { id:5, value:"Не завершил"},
-    { id:6, value:"Принят"}, 
+    { id:1, value:"Приглашён"}, 
+    { id:2, value:"Не явился"}, 
+    { id:3, value:"Завершил"}, 
+    { id:4, value:"Не завершил"},
+    { id:5, value:"Принят на обучение"},
+    { id:5, value:"Принят на работу"},
     { id:7, value:"Не принят"}
 ]
 
@@ -18,17 +18,15 @@ webix.editors.setCandStatus = webix.extend({
 
 var peopleTable = {
     view:"datatable", id:"peopleList", autoWidth:true, editable:true, select:true, columns:[
-        { id:"ID", header:"#", width:40},
-        { id:"Surname", header:"Фамилия", width:100},
-        { id:"Name", header:"Имя", width:100},
-        { id:"Patronymic", header:"Отчество", width:100},
-        { id:"Email", header:"E-mail", width:170},
-        { id:"BirthDate", header:"Дата рождения", width:120},
-        { id:"PhoneNumber",  header:"Телефон", width:150},
-        { id:"Status", template:"#StatusName#", editor:"setCandStatus", options:candidateStatus, value:3, header:"Статус", width:120},
-        { id:"Address", header:"Адрес", width:170},
-        { id:"Education", header:"Образование", width:170},
-        { id:"Resume", header:"Резюме", width:170},
+        { id:"id", header:"#", width:40, template:"#ID#"},
+        { id:"lastname", header:"Фамилия", width:100, template:"#Surname#"},
+        { id:"firstname", header:"Имя", width:100, template:"#Name#"},
+        { id:"midname", header:"Отчество", width:100, template:"#Patronymic#"},
+        { id:"birthdate", header:"Дата рождения", width:120, template:"#BirthDate#"},
+        { id:"email", header:"E-mail", width:170, template:"#Email#"},
+        { id:"phone",  header:"Телефон", width:150, template:"#PhoneNumber#"},
+        { id:"education", header:"Образование", width:170, template:"#Education#"},
+        { id:"status", template:"#StatusName#", view:"richselect", value:3, header:"Статус", width:120},
     ], on:{onItemDblClick:editPeople}
 }
 
@@ -48,70 +46,103 @@ var btnEditCand = {
 
 var addCand = webix.ui({
     view:"window",
-    head:"Добавить участника",
-    modal:true,
-    width:500,
     close:true,
+    modal:true,
     position:"center",
+    width:500,
     body:{
-      view:"form",
-      id:"addCandidate",
-      editable:true,
-      elements:[
-        { view:"text", id:"surnameCand", name:"surname", label:"Фамилия"},
-        { view:"text", id:"nameCand", name:"name", label:"Имя"},
-        { view:"text", id:"patronymicCand", name:"patronymic", label:"Отчество"},
-        { view:"text", id:"emailCand", name:"email", label:"E-mail"},
-        { view:"text", id:"phoneCand", name:"phone", label:"Телефон"},
-        //{ view:"richselect", suggest:{ data:candStatus}, id:"statusCand", value:3, name:"status", label:"Статус"},
-        { view:"text", id:"addressCand", name:"address", label:"Адрес"},
-        { view:"datepicker", id:"birthDateCand", name:"birthDate", label:"Дата рождения", stringResult:true},
-        { view:"text", id:"educationCand", name:"education", label:"Образование"},
-        { view:"text", id:"resumeCand", name:"resume", label:"Резюме"},
-        { cols:[{ view:"button", value:"Добавить", click:addPeople},
-        { view:"button", value:"Отмена", click:function(){
-            $$("surnameCand").setValue("");
-            $$("nameCand").setValue("");
-            $$("patronymicCand").setValue("");
-            $$("emailCand").setValue("");
-            $$("phoneCand").setValue("");
-            $$("statusCand").setValue("");
-            this.getTopParentView().hide(); 
-          }}]}
-      ]
+        view:"form", id:"form", scroll:false,
+        elements:[
+        {cols:[
+            { view:"button", value:"Создать", click: function () {
+                createCand.show();
+                this.getTopParentView().hide();
+            }},
+            { view:"button", value:"Выбрать", click: function(){
+                showAllCandidates();
+                candidateList.show();
+                this.getTopParentView().hide(); }
+            },
+        ]}]
     },
-    move:true
+    move:true,
+});
+
+var createCand = webix.ui({
+    view:"window",
+    close:true,
+    modal:true,
+    position:"center",
+    width:500,
+    body:{view:"form",
+        id:"addCandidate",
+        editable:true,
+        elements:[
+            { view:"text", id:"newLastname", name:"lastName", label:"Фамилия"},
+            { view:"text", id:"newFirstname", name:"name", label:"Имя"},
+            { view:"text", id:"newMidname", name:"midName", label:"Отчество"},
+            { view:"datepicker", id:"birthDateCand", name:"birthDate", label:"Дата рождения", stringResult:true},
+            { view:"text", id:"newEmail", name:"email", label:"E-mail"},
+            { view:"text", id:"newPhone", name:"phone", label:"Телефон"},
+            { view:"text", id:"newEducation", name:"education", label:"Образование"},
+            { cols:[{ view:"button", value:"Добавить", click:addPeople},
+            { view:"button", value:"Отмена", click:function(){
+                $$("newLastname").setValue("");
+                $$("newFirstname").setValue("");
+                $$("newMidname").setValue("");
+                $$("newEmail").setValue("");
+                $$("newPhone").setValue("");
+                this.getTopParentView().hide(); 
+            }}]}
+        ]
+    }
+});
+
+var candidateList = webix.ui({
+    view:"window",
+    head: 'Выбрать кандидата',
+    position: 'center',
+    
+    body:{view:"form", id:"selectCand",
+        elements:[
+            {view:"list",
+            id: "CandidateList",
+            template:"ФИО: #Surname# #Name# #Patronymic#",
+            select:true,
+        },
+            {cols:[{ view: 'button', value: 'Добавить', click: function(){
+                let selectedCandidateId = $$('CandidateList').getSelectedItem()
+                console.log(selectedCandidateId);
+                if(!$$("CandidateList").getSelectedId()){
+                    webix.message("Кандидат не выбран из списка");
+                    return;
+                }
+                else{
+                    createCandidate(selectedCandidateId.Surname, selectedCandidateId.Name, selectedCandidateId.Patronymic,
+                    selectedCandidateId.Email, selectedCandidateId.PhoneNumber, 
+                    selectedCandidateId.BirthDate, selectedCandidateId.Education);
+                    this.getParentView().getParentView().hide()
+                }
+        }},
+        { view:"button", value:"Отмена", click:function(){
+            this.getTopParentView().hide(); 
+          }},
+        ]}
+    ]}
 });
 
 function addPeople(){
-    if($$("nameCand").getValue() != ""){
+    if($$("newLastname").getValue() != ""){
         idCandCounter += 1;
-        /*
-        $$("peopleList").add({idCand:idCandCounter,
-            surname:$$("surnameCand").getValue(), 
-            name:$$("nameCand").getValue(),
-            patronymic:$$("patronymicCand").getValue(),
-            email:$$("emailCand").getValue(), 
-            phoneNumber:$$("phoneCand").getValue(), 
-            status:$$("statusCand").getValue(),
-            //resume:$$("resumeCand").getValue(),
-            address:$$("addressCand").getValue(),
-            birthDate:$$("birthDateCand").getValue(),
-            education:$$("educationCand").getValue()},  0);
-        */
-        //let idCand = idCandCounter;
-        let surname = $$("surnameCand").getValue(); 
-        let name = $$("nameCand").getValue();
-        let patronymic = $$("patronymicCand").getValue();
-        let email = $$("emailCand").getValue(); 
-        let phoneNumber = $$("phoneCand").getValue(); 
-        //let status = $$("statusCand").getValue();
-        let resume = $$("resumeCand").getValue();
-        let address = $$("addressCand").getValue();
+        let lastName = $$("newLastname").getValue(); 
+        let firstName = $$("newFirstname").getValue();
+        let midName = $$("newMidname").getValue();
+        let email = $$("newEmail").getValue(); 
+        let phoneNumber = $$("newPhone").getValue(); 
         let birthDate = $$("birthDateCand").getValue();
-        let education = $$("educationCand").getValue()
+        let education = $$("newEducation").getValue()
         console.log(birthDate);
-        createCandidate(surname, name, patronymic, email, phoneNumber, address, birthDate, education, resume);
+        createCandidate(lastName, firstName, midName, email, phoneNumber, birthDate, education);
         $$("addCandidate").clear();
         this.getParentView().getParentView().getParentView().hide()
     }
@@ -122,7 +153,6 @@ function removeData(){
         webix.message("No item is selected!");
         return;
     }
-    //$$("peopleList").remove($$("peopleList").getSelectedId());
     removeCandidate()
 }
 
@@ -134,8 +164,6 @@ function editPeople(){
     console.log("test");
     showCandidateById();
     editCandWindow.show()
-    //$$("editPeople").show();
-    //$$("editPeople").attachEvent("onFocus", function() {console.log("test");})
 }
 
 var editCandWindow = webix.ui({
@@ -155,9 +183,6 @@ var editCandWindow = webix.ui({
         { view:"text", id:"repatronymCand", name:"Patronymic", label:"Отчество"},
         { view:"text", id:"reemailCand", name:"Email", label:"E-mail"},
         { view:"text", id:"rephoneCand", name:"PhoneNumber", label:"Телефон"},
-        //{ view:"richselect", suggest:{ data:candStatus}, id:"restatusCand", name:"status", label:"Статус"},
-        { view:"text", id:"reresumeCand", name:"Resume", label:"Резюме"},
-        { view:"text", id:"readdressCand", name:"Address", label:"Адрес"},
         { view:"datepicker", stringResult:true, id:"rebirthDateCand", name:"BirthDate", label:"Дата рождения"},
         { view:"text", id:"reeducationCand", name:"Education", label:"Образование"},
         { cols:[{ view:"button", value:"Изменить", click:editCand},
@@ -167,20 +192,16 @@ var editCandWindow = webix.ui({
       ]
     },
     move:true,
-    //on: {onFocus: function() {showCandidateById(); console.log("test");}}
 });
 
 function editCand(){
-    let surname = $$("resurnameCand").getValue();
-    let name = $$("renameCand").getValue();
-    let patronymic = $$("repatronymCand").getValue();
+    let lastName = $$("resurnameCand").getValue();
+    let firstName = $$("renameCand").getValue();
+    let midName = $$("repatronymCand").getValue();
     let email = $$("reemailCand").getValue();
     let phoneNumber = $$("rephoneCand").getValue();
-    //let status = $$("restatusCand").getValue();
-    let resume = $$("reresumeCand").getValue();
     let birthDate = $$("rebirthDateCand").getValue();
-    let address = $$("readdressCand").getValue();
     let education = $$("reeducationCand").getValue();
-    editCandidate(surname, name, patronymic, email, phoneNumber, address, birthDate, education, resume)
+    editCandidate(lastName, firstName, midName, email, phoneNumber, birthDate, education)
     this.getParentView().getParentView().getParentView().hide()
 }
