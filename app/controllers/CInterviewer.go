@@ -1,18 +1,12 @@
 package controllers
 
 import (
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
 	"managerApp/app/helpers"
 	"managerApp/app/models/entities"
 	"managerApp/app/models/providers"
-	//"database/sql"
-	//"encoding/base64"
-	"encoding/json"
-	"fmt"
-	//"strings"
-
-	"io/ioutil"
-
-	//"log"
 	"strconv"
 
 	"github.com/revel/revel"
@@ -31,7 +25,6 @@ func (c *CInterviewer) Init() {
 //получить выбранного сотрудника
 func (c *CInterviewer) GetInterviewerByID() revel.Result {
 	c.Init()
-
 	// получаем ID сотрудника
 	sInterviewerId := c.Params.Get("interviewerID")
 	// конвертируем в int
@@ -39,8 +32,7 @@ func (c *CInterviewer) GetInterviewerByID() revel.Result {
 	if err != nil {
 		return c.RenderJSON(helpers.Failed(err))
 	}
-
-	// вызваем метод GetInterviewerById провайдера
+	// вызываем метод GetInterviewerById провайдера
 	interviewer, err := c.provider.GetInterviewerById(interviewerId)
 	if err != nil {
 		return c.RenderJSON(helpers.Failed(err))
@@ -62,7 +54,6 @@ func (c *CInterviewer) GetAllInterviewers() revel.Result {
 //получить сотрудников, относящихся с выбранному ассессменту
 func (c *CInterviewer) GetInterviewers() revel.Result {
 	c.Init()
-
 	//получаем ID ассессмента и конвертируем его в int
 	sAssessmentId := c.Params.Get("assessmentID")
 	assessmentId, err := strconv.ParseInt(sAssessmentId, 10, 64)
@@ -70,7 +61,6 @@ func (c *CInterviewer) GetInterviewers() revel.Result {
 		fmt.Println(err)
 		return c.RenderJSON(err)
 	}
-
 	//вызываем метод GetInterviewers
 	interviewers, err := c.provider.GetInterviewers(assessmentId)
 	if err != nil {
@@ -80,27 +70,13 @@ func (c *CInterviewer) GetInterviewers() revel.Result {
 }
 
 //добавление сотрудника в выбранный ассессмент
-func (c *CInterviewer) PutInterviewer() revel.Result {
+func (c *CInterviewer) PutInterviewer(newInterviewer entities.Interviewer) revel.Result {
 	c.Init()
 	sAssessmentId := c.Params.Get("assessmentID")
 	assessmentId, err := strconv.ParseInt(sAssessmentId, 10, 64)
 	if err != nil {
 		return c.RenderJSON(helpers.Failed(err))
 	}
-
-	var newInterviewer entities.Interviewer
-
-	//считываем данные с фронта
-	b, err := ioutil.ReadAll(c.Request.GetBody())
-	if err != nil {
-		return c.RenderJSON(helpers.Failed(err))
-	}
-	//анмаршалим
-	err = json.Unmarshal(b, &newInterviewer)
-	if err != nil {
-		return c.RenderJSON(helpers.Failed(err))
-	}
-
 	// вызываем метод PutInterviewer в провайдере
 	createdInterviewer, err := c.provider.PutInterviewer(&newInterviewer, assessmentId)
 	if err != nil {
@@ -122,14 +98,12 @@ func (c *CInterviewer) SetInterviewer(newInterviewer entities.Interviewer) revel
 //изменить сотрудника
 func (c *CInterviewer) PostInterviewer() revel.Result {
 	c.Init()
-
 	//получаем ID сотрудника
 	sInterviewerId := c.Params.Get("interviewerID")
 	interviewerId, err := strconv.ParseInt(sInterviewerId, 10, 64)
 	if err != nil {
 		return c.RenderJSON(helpers.Failed(err))
 	}
-
 	var newInterviewer entities.Interviewer
 	b, err := ioutil.ReadAll(c.Request.GetBody())
 	if err != nil {
@@ -154,13 +128,11 @@ func (c *CInterviewer) DeleteInterviewerByID() revel.Result {
 	if err != nil {
 		return c.RenderJSON(helpers.Failed(err))
 	}
-
 	sAssessmentId := c.Params.Get("assessmentID")
 	assessmentId, err := strconv.ParseInt(sAssessmentId, 10, 64)
 	if err != nil {
 		return c.RenderJSON(helpers.Failed(err))
 	}
-
 	erro := c.provider.DeleteInterviewer(interviewerId, assessmentId)
 	if erro != nil {
 		return c.RenderJSON(erro)
@@ -176,7 +148,6 @@ func (c *CInterviewer) DeleteInterviewer() revel.Result {
 	if err != nil {
 		return c.RenderJSON(helpers.Failed(err))
 	}
-
 	erro := c.provider.DeleteInterviewerFromD(interviewerId)
 	if erro != nil {
 		return c.RenderJSON(erro)

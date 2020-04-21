@@ -36,7 +36,6 @@ func (m *AssessmentMapper) SelectById(assessmentId int64) (*entities.Assessment,
 	assessment := &entities.Assessment{ID: c_id.Int64,
 		Date: c_date.String,
 	}
-	fmt.Println(assessment)
 	//и возвращаем его
 	return assessment, nil
 }
@@ -80,7 +79,6 @@ func (m *AssessmentMapper) Delete(assessmentId int64) error {
 //выбор всех ассессментов из базы
 func (m *AssessmentMapper) Select() ([]entities.Assessment, error) {
 	assessments := []entities.Assessment{}
-	fmt.Println("Created array:", assessments)
 	queryStr := `SELECT up.a_id, to_char(up.a_date, 'DD.MM.YYYY HH24:MI'), down.a_s_name FROM t_assessment up INNER JOIN t_assessment_status down ON down.a_s_id = up.a_status` //
 	rows, err := m.db.Query(queryStr)
 	if err != nil {
@@ -93,16 +91,12 @@ func (m *AssessmentMapper) Select() ([]entities.Assessment, error) {
 			status string
 		)
 		err = rows.Scan(&id, &date, &status)
-		fmt.Println("Vars:", id, date, status)
 		if err == nil {
 			assessment := entities.Assessment{ID: id, Date: date, StatusName: status}
-			fmt.Println("Assessment:", assessment)
 			assessments = append(assessments, assessment)
 		}
-		fmt.Println("Error:", err)
 	}
 	defer rows.Close()
-	fmt.Println("Mapper GET:", assessments)
 	return assessments, nil
 }
 
@@ -116,9 +110,8 @@ func (m *AssessmentMapper) Insert(newAssessment entities.Assessment) (int64, err
 		returning a_id;`
 	err := m.db.QueryRow(insertQuery, newAssessment.Date, newAssessment.Status, newAssessment.Date).Scan(&insertedId)
 	if err != nil {
-		fmt.Println("Ошибка вставки ассессмента: %v", err)
+		fmt.Errorf("Ошибка вставки ассессмента: %v", err)
 	}
-	fmt.Println(newAssessment)
 	return insertedId, nil
 }
 
@@ -143,7 +136,6 @@ func (m *AssessmentMapper) SelectStatus() ([]*entities.AssessmentStatus, error) 
 		}
 		statuses = append(statuses, status)
 	}
-	fmt.Println("Statuses:", statuses)
 	return statuses, nil
 }
 

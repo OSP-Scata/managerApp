@@ -1,12 +1,13 @@
 package controllers
 
 import (
-	"managerApp/app/models/providers"
-	"managerApp/app/models/entities"
-	"github.com/revel/revel"
-	"strings"
 	"encoding/base64"
 	"fmt"
+	"managerApp/app/models/entities"
+	"managerApp/app/models/providers"
+	"strings"
+
+	"github.com/revel/revel"
 )
 
 type CAuth struct {
@@ -27,22 +28,14 @@ func (c *CAuth) Login(user *entities.User) revel.Result {
 		c.Response.Out.Header().Add("WWW-Authenticate", `Basic realm="Please enter your username and password for this site"`)
 		c.Response.SetStatus(401)
 	}
-	fmt.Println("Auth:", authorization)
-	if authorization == "" {
-		c.Response.Out.Header().Add("WWW-Authenticate", `Basic realm="Please enter your username and password for this site"`)
-		c.Response.SetStatus(401)
-	}
-
 	// получаем закодированные имя пользователя и пароль
 	// убираем подстроку "Basic " и декодируем
 	loginAndPassB64 := strings.TrimLeft(authorization, "Basic ")
 	bLoginAndPass, err := base64.StdEncoding.DecodeString(loginAndPassB64)
-
 	if err != nil {
 		fmt.Println(fmt.Sprintf("ERROR decode base64: %v", err))
 		return nil
 	}
-
 	// конвертируем в string
 	loginAndPass := string(bLoginAndPass)
 	if len(loginAndPass) != 0 {

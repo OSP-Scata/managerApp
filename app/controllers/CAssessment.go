@@ -2,18 +2,12 @@ package controllers
 
 import (
 	"database/sql"
-	_ "encoding/base64"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"managerApp/app/helpers"
 	"managerApp/app/models/entities"
 	"managerApp/app/models/providers"
-
-	//"strings"
-
-	"io/ioutil"
-
-	_ "log"
 	"strconv"
 
 	"github.com/revel/revel"
@@ -31,6 +25,7 @@ func (c *CAssessment) Init() {
 	c.provider.Init()
 }
 
+//удалить ассессмент
 func (c *CAssessment) DeleteAssessmentByID() revel.Result {
 	c.Init()
 	//получаем ID удаляемого ассессментаи и конвертируем в int
@@ -48,6 +43,7 @@ func (c *CAssessment) DeleteAssessmentByID() revel.Result {
 	return nil
 }
 
+//изменить ассессмент
 func (c *CAssessment) PostAssessmentByID() revel.Result {
 	c.Init()
 	sAssessmentId := c.Params.Get("assessmentID")
@@ -71,6 +67,7 @@ func (c *CAssessment) PostAssessmentByID() revel.Result {
 	return c.RenderJSON(helpers.Success(updatedAssessment))
 }
 
+//получить все ассессменты
 func (c *CAssessment) GetAssessments() revel.Result {
 	c.Init()
 	assessments, err := c.provider.GetAssessments()
@@ -81,6 +78,7 @@ func (c *CAssessment) GetAssessments() revel.Result {
 	return c.RenderJSON(assessments)
 }
 
+//создать ассессмент
 func (c *CAssessment) PutAssessment(newAssessment entities.Assessment) revel.Result {
 	c.Init()
 	createdAssessment, err := c.provider.PutAssessment(newAssessment)
@@ -120,6 +118,7 @@ func (c *CAssessment) GetStatus2() revel.Result {
 	return c.RenderJSON(assessment)
 }
 
+//установить статус ассессмента
 func (c *CAssessment) SetStatus(newStatus entities.AssessmentStatus) revel.Result {
 	c.Init()
 	sAssessmentId := c.Params.Get("assessmentID")
@@ -140,6 +139,7 @@ func (c *CAssessment) SetStatus(newStatus entities.AssessmentStatus) revel.Resul
 	return c.RenderJSON(helpers.Success(updatedStatus))
 }
 
+//выбрать ассессмент
 func (c *CAssessment) GetAssessmentByID() revel.Result {
 	c.Init()
 	// достаём ID ассессмента и конвертируем его в int
