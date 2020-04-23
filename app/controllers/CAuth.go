@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"managerApp/app/models/entities"
 	"managerApp/app/models/providers"
+	"net/http"
 	"strings"
+	"time"
 
 	"github.com/revel/revel"
 )
@@ -19,6 +21,16 @@ type CAuth struct {
 func (c *CAuth) Init() {
 	c.provider = new(providers.AuthProvider)
 	c.provider.Init()
+}
+
+func cookieHandle(w http.ResponseWriter, name string, value string) {
+	expires := time.Now().AddDate(0, 0, 1)
+	ck := http.Cookie{
+		Name:    name,
+		Value:   value,
+		Expires: expires,
+	}
+	http.SetCookie(w, &ck)
 }
 
 func (c *CAuth) Login(user *entities.User) revel.Result {
@@ -48,8 +60,9 @@ func (c *CAuth) Login(user *entities.User) revel.Result {
 			c.Response.Status = 401
 			return c.RenderJSON("invalid username or password")
 		}
+		cookieHandle(c.Response.Out.Server.GetRaw().(http.ResponseWriter), userName, password)
 	}
-	return c.RenderJSON(user)
+	return c.Render()
 }
 
 func (c *CAuth) Logout() revel.Result {
