@@ -21,16 +21,51 @@ type CAuth struct {
 func (c *CAuth) Init() {
 	c.provider = new(providers.AuthProvider)
 	c.provider.Init()
+	fmt.Println("CAuth works.")
 }
 
-func cookieHandle(w http.ResponseWriter, name string, value string) {
+func cookieSet(w http.ResponseWriter, value string) {
 	expires := time.Now().AddDate(0, 0, 1)
 	ck := http.Cookie{
-		Name:    name,
+		Name:    "SessionID",
 		Value:   value,
 		Expires: expires,
 	}
 	http.SetCookie(w, &ck)
+}
+
+func cookieRead(r *http.Request) string {
+	var ck, err = r.Cookie("SessionID")
+	if err == nil {
+		//fmt.Println("COOKIE:", ck.Name, ck.Value)
+		return ck.Value
+	}
+	return ""
+}
+
+func (c *CAuth) cookieAuth(user *entities.User) revel.Result {
+	ck_auth := cookieRead(c.Request.In.GetRaw().(*http.Request))
+	if ck_auth != "" {
+		loginAndPassSplitted := strings.Split(ck_auth, ":")
+		userName := loginAndPassSplitted[0]
+		password := loginAndPassSplitted[1]
+		var err error
+		user, err := c.provider.Login(userName, password)
+		if err != nil {
+			fmt.Println(err)
+			c.Response.Status = 401
+			return c.RenderJSON("invalid auth")
+		}
+	}
+	return c.Render()
+}
+
+func checkUser(c *CAuth) revel.Result {
+	if user := cookieAuth(); user == nil {
+		c.Flash.Error("Please log in first")
+		return c.Redirect(App.Index)
+	}
+	return nil
 }
 
 func (c *CAuth) Login(user *entities.User) revel.Result {
@@ -39,6 +74,7 @@ func (c *CAuth) Login(user *entities.User) revel.Result {
 	if authorization == "" {
 		c.Response.Out.Header().Add("WWW-Authenticate", `Basic realm="Please enter your username and password for this site"`)
 		c.Response.SetStatus(401)
+		return c.RenderJSON("invalid auth")
 	}
 	// получаем закодированные имя пользователя и пароль
 	// убираем подстроку "Basic " и декодируем
@@ -60,7 +96,7 @@ func (c *CAuth) Login(user *entities.User) revel.Result {
 			c.Response.Status = 401
 			return c.RenderJSON("invalid username or password")
 		}
-		cookieHandle(c.Response.Out.Server.GetRaw().(http.ResponseWriter), userName, password)
+		cookieSet(c.Response.Out.Server.GetRaw().(http.ResponseWriter), loginAndPass)
 	}
 	return c.Render()
 }

@@ -1,8 +1,8 @@
 package app
 
 import (
-	"github.com/revel/revel"
 	_ "github.com/lib/pq"
+	"github.com/revel/revel"
 )
 
 var (
@@ -36,7 +36,7 @@ func init() {
 	// ( order dependent )
 	// revel.OnAppStart(ExampleStartupScript)
 	//revel.OnAppStart(main)
-	// revel.OnAppStart(FillCache)
+	revel.OnAppStart(checkUser)
 }
 
 // HeaderFilter adds common security headers
